@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	<url>
+		<loc>http://cida.usgs.gov/nwc</loc>
+	</url>
+{.section waterbudget_hucs}
+{.section features}
+{.repeated section @}
+	<url>
+		<loc>http://cida.usgs.gov/nwc/#!waterbudget/huc/{properties.huc_12}</loc>
+	</url>
+{.end}
+{.end}
+{.end}
+{.section streamflow_gage_ids}
+{.section features}
+{.repeated section @}
+	<url>
+		<loc>http://cida.usgs.gov/nwc/#!streamflow-stats/gage/{properties.STAID}</loc>
+	<url>
+{.end}
+{.end}
+{.end}
+{.section streamflow_hucs}
+{.section features}
+{.repeated section @}
+	<url>
+		<locl http://cida.usgs.gov/nwc/#!streamflow-stats/huc/{properties.huc12}</loc>
+	</url>
+{.end}
+{.end}
+{.end}
+</urlset>
