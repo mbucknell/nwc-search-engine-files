@@ -20,10 +20,14 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Generate sitemap.xml for NWC')
     parser.add_argument('--geoserver', help='Geoserver to use to retrieve HUCs and gages', 
                         default='http://cida.usgs.gov/nwc/geoserver/')
+    parser.add_argument('--root_url', help='applications root url',
+                        default='http://cida.usgs.gov/nwc/')
+    parser.add_argument('--destination_dir', help='Destination directory for the sitemap.xml file',
+                        default='')
     args = parser.parse_args()
     
     template = open('sitemap.template', 'r');
-    sitemap_file = open('sitemap.xml', 'w');
+    sitemap_file = open('%ssitemap.xml' % args.destination_dir, 'w');
     
     print 'Retrieving HUCs and gage IDs from %s' % args.geoserver
     
@@ -32,6 +36,7 @@ if __name__=="__main__":
     streamflow_hucs = get_feature(args.geoserver, 'NWC:huc12_se_basins_v2_local', 'huc12')
     
     context = {
+               'root_url' : args.root_url,
                'waterbudget_hucs' : waterbudget_hucs,
                'streamflow_gage_ids' : streamflow_gage_ids,
                'streamflow_hucs' : streamflow_hucs
