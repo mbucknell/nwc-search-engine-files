@@ -7,7 +7,7 @@ This repository houses code that is used to generate a sitemap for the NWC porta
 2. Install the requirements in the virtualenv by executing ```pip install -r requirements.txt``` while in the virtualenv
 
 ## Running generate_sitemap
-The generation script can be run with no arguments  but to see what arguments can be used run the script as follows:
+The generation script can be run with no arguments  but to see what arguments can be used, run the script as follows:
 ```
 python generate_sitemap --help
 ```
