@@ -2,36 +2,42 @@
 
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
-		<loc>{root_url}</loc>
+		<loc>{{ root_url }}</loc>
+		<lastmod>{{ last_modified }}</lastmod>
 	</url>
 	
 	{% for feature in waterbudget_hucs.features %}
 	<url>
 		<loc>{{root_url }}#!waterbudget/huc/{{ feature.properties.huc_12 }}</loc>
+		<lastmod>{{ last_modified }}</lastmod>
 	</url>
 	{% endfor %}
 	
 	{% for feature in streamflow_gage_ids.features %}
 	<url>
 		<loc>{{ root_url }}#!streamflow-stats/gage/{{ feature.properties.STAID }}</loc>
+		<lastmod>{{ last_modified }}</lastmod>
 	<url>
 	{% endfor %}
 	
 	{% for feature in streamflow_hucs.features %}
 	<url>
 		<loc>{{ root_url }}#!streamflow-stats/huc/{{ feature.properties.huc12 }}</loc>
+		<lastmod>{{ last_modified }}</lastmod>
 	</url>
 	{% endfor %}
 	
 	{% for info in projects %}
 	<url>
 		<loc>{{ root_url }}#!data-discovery/projectDetail/{{ info.id }}</loc>
+		<lastmod>{{ last_modified }}</lastmod>
 	</url>
 	{% endfor %}
 	
 	{% for info in datasets %}
 	<url>
 		<loc>{{ root_url }}#!data-discovery/dataDetail/{{ info.id }}</loc>
+		<lastmod>{{ last_modified }}</lastmod>
 	</url>
 	{% endfor %}
 </urlset>

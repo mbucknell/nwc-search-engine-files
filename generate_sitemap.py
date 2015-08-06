@@ -1,4 +1,5 @@
 import argparse
+import datetime
 
 from jinja2 import Template
 import requests
@@ -47,7 +48,8 @@ if __name__=="__main__":
     template_file = open('sitemap_template.xml', 'r');
     sitemap_file = open('%ssitemap.xml' % args.destination_dir, 'w');
     
-    context = {'root_url' : args.root_url}
+    context = {'root_url' : args.root_url,
+               'last_modified' : datetime.date.today().isoformat()}
     
     print 'Retrieving HUCs and gage IDs from %s' % args.geoserver
     
