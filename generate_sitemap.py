@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import math
 
 from jinja2 import Template
 import requests
@@ -27,8 +28,48 @@ def get_sciencebase_data(sciencebase_endpoint, browse_category):
     response.raise_for_status()
     return response.json()
 
+'''
+Creates the sitemaps for the ids using template and base_file_name
+Return the list of sitemap files created
+'''
+def create_sitemaps(attributes, template_file_name, dest_dir, base_file_name, base_context):
+    SITEMAP_URL_LIMIT = 50000
+
+    print 'Number of attributes %d' % len(attributes)
+    template_file = open(template_file_name, 'r')
+    template = Template(template_file.read())
+    template_file.close()
+    
+    file_count = math.ceil(len(attributes) / float(SITEMAP_URL_LIMIT))
+    index = 1
+    file_names = []
+    while index <= file_count:
+        this_file_name = '%s%s%d.xml' % (dest_dir, base_file_name, index)
+        file_names.append(this_file_name)
+        
+        file = open(this_file_name, 'w')
+        context = base_context.copy()
+        if index == file_count:
+            last_index = len(attributes) - 1
+        else:
+            last_index = index * SITEMAP_URL_LIMIT - 1
+        print 'Adding from index %d - %d' % ((index - 1)*SITEMAP_URL_LIMIT, last_index)
+        context['attributes'] = attributes[(index - 1) * SITEMAP_URL_LIMIT:last_index]
+        file.write(template.render(context))
+        file.close()
+        
+        index = index + 1
+    return file_names
+    
 
 if __name__=="__main__":
+    
+    WB_HUC_TEMPLATE = 'sitemap_waterbudget_huc_template.xml'
+    SF_HUC_TEMPLATE = 'sitemap_streamflow_huc_template.xml'
+    SF_GAGE_TEMPLATE = 'sitemap_streamflow_gage_template.xml'
+    PROJECT_TEMPLATE = 'sitemap_project_template.xml'
+    DATA_TEMPLATE = 'sitemap_data_template.xml'
+    INDEX_TEMPLATE = 'sitemap_index_template.xml'
     
     parser = argparse.ArgumentParser(description='Generate sitemap.xml for NWC')
     parser.add_argument('--geoserver', 
@@ -45,27 +86,36 @@ if __name__=="__main__":
                         default='')
     args = parser.parse_args()
     
-    template_file = open('sitemap_template.xml', 'r');
-    sitemap_file = open('%ssitemap.xml' % args.destination_dir, 'w');
+    sitemap_files = []
     
     context = {'root_url' : args.root_url,
                'last_modified' : datetime.date.today().isoformat()}
     
     print 'Retrieving HUCs and gage IDs from %s' % args.geoserver
     
-    context['waterbudget_hucs'] = get_feature(args.geoserver, 'NHDPlusHUCs:nationalwbdsnapshot', 'huc_12')    
-    context['streamflow_gage_ids'] = get_feature(args.geoserver, 'NWC:gagesII', 'STAID')
-    context['streamflow_hucs'] = get_feature(args.geoserver, 'NWC:huc12_se_basins_v2_local', 'huc12')
+    waterbudget_hucs = get_feature(args.geoserver, 'NHDPlusHUCs:nationalwbdsnapshot', 'huc_12')['features']    
+    streamflow_gage_ids = get_feature(args.geoserver, 'NWC:gagesII', 'STAID')['features']
+    streamflow_hucs = get_feature(args.geoserver, 'NWC:huc12_se_basins_v2_local', 'huc12')['features']
     
     print 'Retrieving projects and dataset ids from %s' % args.sciencebase_url 
             
-    context['projects'] = get_sciencebase_data(args.sciencebase_url, 'Project')['items']
-    context['datasets'] = get_sciencebase_data(args.sciencebase_url, 'Data')['items']
+    projects = get_sciencebase_data(args.sciencebase_url, 'Project')['items']
+    datasets = get_sciencebase_data(args.sciencebase_url, 'Data')['items']
     
-    print 'Creating sitemap file at %s' % sitemap_file.name
+    print 'Creating sitemap files in %s'  % args.destination_dir
     
-    template = Template(template_file.read())
+    sitemap_files.extend(create_sitemaps(waterbudget_hucs, WB_HUC_TEMPLATE, args.destination_dir, 'sitemap_wb_huc', context))
+    sitemap_files.extend(create_sitemaps(streamflow_gage_ids, SF_GAGE_TEMPLATE, args.destination_dir, 'sitemap_sf_gage', context))
+    sitemap_files.extend(create_sitemaps(streamflow_hucs, SF_HUC_TEMPLATE, args.destination_dir, 'sitemap_sf_huc', context))
+    sitemap_files.extend(create_sitemaps(projects, PROJECT_TEMPLATE, args.destination_dir, 'sitemap_project', context))
+    sitemap_files.extend(create_sitemaps(datasets, DATA_TEMPLATE, args.destination_dir, 'sitemap_data', context))
+    
+    template_index_file = open(INDEX_TEMPLATE, 'r')
+    template = Template(template_index_file.read())
+    template_index_file.close()
+    
+    context['sitemap_files'] = sitemap_files
+    sitemap_file = open('%ssitemap.xml' % args.destination_dir, 'w')
+        
     sitemap_file.write(template.render(context))
-    
-    template_file.close()
     sitemap_file.close()

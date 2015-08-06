@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-	{% for feature in attributes %}
+	{% for info in attributes %}
 	<url>
-		<loc>{{root_url }}#!waterbudget/huc/{{ feature.properties.huc_12 }}</loc>
+		<loc>{{ root_url }}#!data-discovery/dataDetail/{{ info.id }}</loc>
 		<lastmod>{{ last_modified }}</lastmod>
 	</url>
 	{% endfor %}

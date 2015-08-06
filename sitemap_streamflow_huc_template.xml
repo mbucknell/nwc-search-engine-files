@@ -3,7 +3,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	{% for feature in attributes %}
 	<url>
-		<loc>{{root_url }}#!waterbudget/huc/{{ feature.properties.huc_12 }}</loc>
+		<loc>{{ root_url }}#!streamflow-stats/huc/{{ feature.properties.huc12 }}</loc>
 		<lastmod>{{ last_modified }}</lastmod>
 	</url>
 	{% endfor %}
