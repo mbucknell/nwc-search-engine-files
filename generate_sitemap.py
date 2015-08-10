@@ -70,16 +70,20 @@ if __name__=="__main__":
     DATA_TEMPLATE = 'sitemap_data_template.xml'
     INDEX_TEMPLATE = 'sitemap_index_template.xml'
     
+    DEFAULT_GEOSERVER = 'http://cida.usgs.gov/nwc/geoserver/'
+    DEFAULT_SCIENCEBASE = 'https://www.sciencebase.gov/'
+    DEFAULT_ROOT_URL = 'http://cida.usgs.gov/nwc/'
+    
     parser = argparse.ArgumentParser(description='Generate sitemap.xml for NWC')
     parser.add_argument('--geoserver', 
-                        help='Geoserver to use to retrieve HUCs and gages. Defaults to http://cida.usgs.gov/nwc/geoserver/', 
-                        default='http://cida.usgs.gov/nwc/geoserver/')
+                        help='Geoserver to use to retrieve HUCs and gages. Defaults to %s' % DEFAULT_GEOSERVER, 
+                        default=DEFAULT_GEOSERVER)
     parser.add_argument('--sciencebase_url', 
-                        help='URL where the data discovery tool gets its project information. Defaults to https://www.sciencebase.gov/',
-                        default='https://www.sciencebase.gov/')
+                        help='URL where the data discovery tool gets its project information. Defaults to %s' % DEFAULT_SCIENCEBASE,
+                        default=DEFAULT_SCIENCEBASE)
     parser.add_argument('--root_url', 
-                        help='The application\'s root url. Defaults to http://cida.usgs.gov/nwc/',
-                        default='http://cida.usgs.gov/nwc/')
+                        help='The application\'s root url. Defaults to %s' % DEFAULT_ROOT_URL,
+                        default=DEFAULT_ROOT_URL)
     parser.add_argument('--destination_dir', 
                         help='Destination directory for the sitemap.xml file. Defaults to the directory where the script is run.',
                         default='')
