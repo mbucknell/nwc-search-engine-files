@@ -35,7 +35,6 @@ Return the list of sitemap files created
 def create_sitemaps(attributes, template_file_name, dest_dir, base_file_name, base_context):
     SITEMAP_URL_LIMIT = 50000
 
-    print 'Number of attributes %d' % len(attributes)
     template_file = open(template_file_name, 'r')
     template = Template(template_file.read())
     template_file.close()
@@ -44,8 +43,9 @@ def create_sitemaps(attributes, template_file_name, dest_dir, base_file_name, ba
     index = 1
     file_names = []
     while index <= file_count:
-        this_file_name = '%s%s%d.xml' % (dest_dir, base_file_name, index)
-        file_names.append(this_file_name)
+        sitemap_filename = '%s%d.xml' % (base_file_name, index)
+        this_file_name = '%s%s' % (dest_dir, sitemap_filename)
+        file_names.append(sitemap_filename)
         
         file = open(this_file_name, 'w')
         context = base_context.copy()
@@ -53,7 +53,6 @@ def create_sitemaps(attributes, template_file_name, dest_dir, base_file_name, ba
             last_index = len(attributes) - 1
         else:
             last_index = index * SITEMAP_URL_LIMIT - 1
-        print 'Adding from index %d - %d' % ((index - 1)*SITEMAP_URL_LIMIT, last_index)
         context['attributes'] = attributes[(index - 1) * SITEMAP_URL_LIMIT:last_index]
         file.write(template.render(context))
         file.close()

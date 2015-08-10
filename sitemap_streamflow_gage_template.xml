@@ -5,6 +5,6 @@
 	<url>
 		<loc>{{ root_url }}#!streamflow-stats/gage/{{ feature.properties.STAID }}</loc>
 		<lastmod>{{ last_modified }}</lastmod>
-	<url>
+	</url>
 	{% endfor %}
 </urlset>
