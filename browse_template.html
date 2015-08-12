@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head><title>National Water Census Data Portal Browse Page</title></hed>
+<body>
+<h1>Waterbudget huc12 pages</h1>
+{% for f in waterbudget_hucs %}
+	<div>
+	<a href="{{root_url }}#!waterbudget/huc/{{ f.properties.huc_12 }}">{{root_url }}#!waterbudget/huc/{{ f.properties.huc_12 }}</a>
+	</div>
+{% endfor %}
+<h1> Streamflow Gage pages</h1>
+{% for f in streamflow_gage_ids %}
+	<div>
+	<a href="{{ root_url }}#!streamflow-stats/gage/{{ f.properties.STAID }}">{{ root_url }}#!streamflow-stats/gage/{{ f.properties.STAID }}</a>
+	</div>
+{% endfor %}
+<h1>Streamflow modeled huc pages</h1>
+{% for f in streamflow_hucs %}
+<div>
+	<a href="{{ root_url }}#!streamflow-stats/huc/{{ f.properties.huc12 }}">{{ root_url }}#!streamflow-stats/huc/{{ f.properties.huc12 }}</a>
+</div>
+{% endfor %}
+<h1>Project pages</h1>
+{% for f in projects %}
+<div>
+	<a href="{{ root_url }}#!data-discovery/projectDetail/{{ f.id }}">{{ root_url }}#!data-discovery/projectDetail/{{ f.id }}</a>
+</div>
+{% endfor %}
+<h1>Dataset Description pages</h1>
+{% for f in datasets %}
+<div>
+	<a href="{ root_url }}#!data-discovery/dataDetail/{{ f.id }}">{{ root_url }}#!data-discovery/dataDetail/{{ f.id }}</a>
+</div>
+{% endfor %}
+</body>
+</html>
