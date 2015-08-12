@@ -69,6 +69,7 @@ if __name__=="__main__":
     PROJECT_TEMPLATE = 'sitemap_project_template.xml'
     DATA_TEMPLATE = 'sitemap_data_template.xml'
     INDEX_TEMPLATE = 'sitemap_index_template.xml'
+    BROWSE_TEMPLATE = 'browse_template.html'
     
     DEFAULT_GEOSERVER = 'http://cida.usgs.gov/nwc/geoserver/'
     DEFAULT_SCIENCEBASE = 'https://www.sciencebase.gov/'
@@ -92,7 +93,7 @@ if __name__=="__main__":
     sitemap_files = []
     
     context = {'root_url' : args.root_url,
-               'last_modified' : datetime.date.today().isoformat()}
+               'last_modified' : datetime.datetime.today().isoformat()}
     
     print 'Retrieving HUCs and gage IDs from %s' % args.geoserver
     
@@ -117,8 +118,25 @@ if __name__=="__main__":
     template = Template(template_index_file.read())
     template_index_file.close()
     
-    context['sitemap_files'] = sitemap_files
+    index_context = context.copy()
+    index_context['sitemap_files'] = sitemap_files
     sitemap_file = open('%ssitemap.xml' % args.destination_dir, 'w')
         
-    sitemap_file.write(template.render(context))
+    sitemap_file.write(template.render(index_context))
     sitemap_file.close()
+    
+    # Create browse.html
+    print 'Create browse.html'
+    template_browse_file = open(BROWSE_TEMPLATE)
+    browse_template = Template(template_browse_file.read())
+    template_browse_file.close()
+    
+    browse_context = context.copy()
+    browse_context['waterbudget_hucs'] = waterbudget_hucs
+    browse_context['streamflow_gage_ids'] = streamflow_gage_ids
+    browse_context['streamflow_hucs'] = streamflow_hucs
+    browse_context['projects'] = projects
+    browse_context['datasets'] = datasets
+    browse_file = open('%sbrowse.html' % args.destination_dir, 'w')
+    browse_file.write(browse_template.render(browse_context))
+    browse_file.close()
