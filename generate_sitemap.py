@@ -2,11 +2,11 @@ import sys
 import argparse
 import datetime
 import math
-import Bunch from Bunch
+from bunch import Bunch
 from jinja2 import Template
 import requests
 
-def get_feature(geoserver_endpoint, layer, attribute):
+def get_features(geoserver_endpoint, layer, attribute):
     response = requests.get(geoserver_endpoint + 'wfs', 
                             {'service' : 'wfs',
                              'version' : '2.0.0',
@@ -16,11 +16,11 @@ def get_feature(geoserver_endpoint, layer, attribute):
                              'outputFormat' : 'json'
                              })
     response.raise_for_status()
-    json = response.json
+    my_json = response.json()
     
-    return json['features']
+    return my_json['features']
 
-def get_sciencebase_data(sciencebase_endpoint, browse_category):
+def get_sciencebase_items(sciencebase_endpoint, browse_category):
     response = requests.get(sciencebase_endpoint + 'catalog/items',
                             {'facetTermLevelLimit' : 'false',
                              'q' : '',
@@ -29,7 +29,8 @@ def get_sciencebase_data(sciencebase_endpoint, browse_category):
                              'format' : 'json'
                              })
     response.raise_for_status()
-    return response.json()
+    my_json = response.json() 
+    return my_json['items']
 
 '''
 Creates the sitemaps for the ids using template and base_file_name
@@ -85,38 +86,38 @@ def parse_args (argv):
     parser.add_argument('--destination_dir', 
                         help='Destination directory for the sitemap.xml file. Defaults to the directory where the script is run.',
                         default='')
-    args = parser.parse_args(args=argv)
+    args = parser.parse_args(args=argv[1:])
     return args
 
 '''
 get waterbudget huc feature information
 '''
 def get_waterbudget_huc_fetures(geoserver):
-    return get_feature(geoserver, 'NHDPlusHUCs:nationalwbdsnapshot', 'huc_12')
+    return get_features(geoserver, 'NHDPlusHUCs:nationalwbdsnapshot', 'huc_12')
 
 '''
 get streamflow gage ids
 '''
 def get_streamflow_gage_features(geoserver):
-    return get_feature(geoserver, 'NWC:gagesII', 'STAID')
+    return get_features(geoserver, 'NWC:gagesII', 'STAID')
 
 '''
 get streamflow huc features
 '''
 def get_streamflow_huc_features(geoserver):
-    return get_feature(geoserver, 'NWC:huc12_se_basins_v2_local', 'huc12')
+    return get_features(geoserver, 'NWC:huc12_se_basins_v2_local', 'huc12')
 
 '''
 get sciencebase project items
 '''
 def get_project_items(sciencebase):
-    return get_sciencebase_data(sciencebase, 'Project')['items']
+    return get_sciencebase_items(sciencebase, 'Project')
 
 '''
 get sciencebase dataset items
 '''
 def get_dataset_items(sciencebase):
-    return get_sciencebase_data(sciencebase, 'Data')['items']
+    return get_sciencebase_items(sciencebase, 'Data')
 
 '''
 get nwc data from geoserver and sciencebase.
@@ -168,7 +169,8 @@ def generate_sitemap(data, destination_dir, root_context):
 
 def generate_root_browse(data, destination_dir, root_context):
     BROWSE_TEMPLATE = 'browse_template.html'
-      # Create browse.html
+    
+    # Create browse.html
     print 'Create browse.html'
     template_browse_file = open(BROWSE_TEMPLATE)
     browse_template = Template(template_browse_file.read())
@@ -201,5 +203,6 @@ if __name__=="__main__":
 
     generate_sitemap(data, args.destination_dir, context)
     generate_root_browse(data, args.destination_dir, context)
+    print 'Done'
        
     
