@@ -1,7 +1,6 @@
 import sys
 import argparse
 import math
-from bunch import Bunch
 import requests
 
 def get_features(geoserver_endpoint, layer, attribute):
@@ -92,31 +91,10 @@ returns a 'Bunch' of data from the servers
 def get_nwc_data(geoserver, sciencebase):
     print 'Retrieving HUCs and gage IDs from %s' % geoserver
     print 'Retrieving projects and dataset ids from %s' % sciencebase
-    return Bunch({
+    return {
             'waterbudget_hucs' : get_waterbudget_huc_fetures(geoserver),
             'streamflow_gages' : get_streamflow_gage_features(geoserver),
             'streamflow_hucs' : get_streamflow_huc_features(geoserver),
             'projects' : get_project_items(sciencebase),
             'datasets' : get_dataset_items(sciencebase),
-    })
-
-def generate_root_browse(data, destination_dir, root_context):
-    BROWSE_TEMPLATE = 'browse_template.html'
-    
-    # Create browse.html
-    print 'Create browse.html'
-    template_browse_file = open(BROWSE_TEMPLATE)
-    browse_template = Template(template_browse_file.read())
-    template_browse_file.close()
-    
-    browse_context = root_context.copy()
-    browse_context['waterbudget_hucs'] = data.waterbudget_hucs
-    browse_context['streamflow_gages'] = data.streamflow_gages
-    browse_context['streamflow_hucs'] = data.streamflow_hucs
-    browse_context['projects'] = data.projects
-    browse_context['datasets'] = data.datasets
-    browse_file = open('%sbrowse.html' % destination_dir, 'w')
-    browse_file.write(browse_template.render(browse_context))
-    browse_file.close()
-    return 0
-    
+    }

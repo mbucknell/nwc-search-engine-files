@@ -2,7 +2,7 @@ import sys
 import datetime
 import generation_commons as gc
 from jinja2 import Template
-
+import math
 
 '''
 Creates the sitemaps for the ids using template and base_file_name
@@ -50,13 +50,13 @@ def generate_sitemap(data, destination_dir, context):
     DATA_TEMPLATE = 'sitemap_data_template.xml'
     INDEX_TEMPLATE = 'sitemap_index_template.xml'
     
-    print 'Creating sitemap files in %s'  % args.destination_dir
+    print 'Creating sitemap files in %s'  % destination_dir
     sitemap_files = []
-    sitemap_files.extend(create_sitemaps(data.waterbudget_hucs, WB_HUC_TEMPLATE, args.destination_dir, 'sitemap_wb_huc', context))
-    sitemap_files.extend(create_sitemaps(data.streamflow_gages, SF_GAGE_TEMPLATE, args.destination_dir, 'sitemap_sf_gage', context))
-    sitemap_files.extend(create_sitemaps(data.streamflow_hucs, SF_HUC_TEMPLATE, args.destination_dir, 'sitemap_sf_huc', context))
-    sitemap_files.extend(create_sitemaps(data.projects, PROJECT_TEMPLATE, args.destination_dir, 'sitemap_project', context))
-    sitemap_files.extend(create_sitemaps(data.datasets, DATA_TEMPLATE, args.destination_dir, 'sitemap_data', context))
+    sitemap_files.extend(create_sitemaps(data['waterbudget_hucs'], WB_HUC_TEMPLATE, destination_dir, 'sitemap_wb_huc', context))
+    sitemap_files.extend(create_sitemaps(data['streamflow_gages'], SF_GAGE_TEMPLATE, destination_dir, 'sitemap_sf_gage', context))
+    sitemap_files.extend(create_sitemaps(data['streamflow_hucs'], SF_HUC_TEMPLATE, destination_dir, 'sitemap_sf_huc', context))
+    sitemap_files.extend(create_sitemaps(data['projects'], PROJECT_TEMPLATE, destination_dir, 'sitemap_project', context))
+    sitemap_files.extend(create_sitemaps(data['datasets'], DATA_TEMPLATE, destination_dir, 'sitemap_data', context))
 
     template_index_file = open(INDEX_TEMPLATE, 'r')
     template = Template(template_index_file.read())
@@ -64,7 +64,7 @@ def generate_sitemap(data, destination_dir, context):
     
     index_context = context.copy()
     index_context['sitemap_files'] = sitemap_files
-    sitemap_file = open('%ssitemap.xml' % args.destination_dir, 'w')
+    sitemap_file = open('%ssitemap.xml' % destination_dir, 'w')
         
     sitemap_file.write(template.render(index_context))
     sitemap_file.close()
@@ -88,5 +88,3 @@ def main(argv):
 if __name__=="__main__":
     main(sys.argv)
     print 'Done'
-       
-    
