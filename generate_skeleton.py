@@ -44,7 +44,6 @@ def generate_skeleton(data, destination_dir, context):
     SF_GAGE_TEMPLATE = 'streamflow_gage.html'
     PROJECT_TEMPLATE = 'project.html'
     DATA_TEMPLATE = 'data.html'
-    INDEX_TEMPLATE = 'index.html'
     
     env = Environment()
     env.loader = FileSystemLoader(BASE_DIR)
