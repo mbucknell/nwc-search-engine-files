@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title%}Data Detail - {{title}}{% endblock %}
+{% block body %}
+<h1>Data Details</h1>
+<dl>
+	<dt>Title</dt>
+	<dd>{{title}}</dd>
+	<dt>Summary</dt>
+	<dd>{{summary}}</dd>
+	<dt>Source</dt>
+	<dd><a href="{{link.url}}">View Data in ScienceBase</a></dd>
+</dl>
+
+<h1>Links</h1>
+<ul>
+	{% for web_link in webLinks %}
+	<li><a href="{{web_link.uri}}">{{web_link.title}}</li>
+	{% endfor %}
+</ul>
+
+{% endblock %}

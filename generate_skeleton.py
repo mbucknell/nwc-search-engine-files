@@ -16,14 +16,16 @@ from jinja2.environment import Environment
     context - a dict of things to pass to the template
     theme_path - a String appended to context.root_url. Contains trailing slash.
     env - jinja.environment
+    destination_dir - String path with trailing slash
 """
 def generate_themed_skeletons(theme_data, template_file_name, context, theme_path, env, destination_dir):
     
     template = env.get_template(template_file_name)
     
     for datum in theme_data:
-        datum_name = context['root_url'] + theme_path + datum['id']
-        datum_file_name = destination_dir + os.sep + hashlib.sha1(datum_name).hexdigest() + ".html"
+        datum_url = context['root_url'] + theme_path + datum['id']
+        datum_file_name = os.path.join(destination_dir, hashlib.sha1(datum_url).hexdigest() + ".html")
+        print 'saving skeletal representation of {0} to {1}'.format(datum_url, datum_file_name)
         datum_file = open(datum_file_name, 'w')
         merged_context = context.copy()
         merged_context.update(datum)
