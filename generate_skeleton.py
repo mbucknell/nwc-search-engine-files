@@ -52,13 +52,8 @@ def generate_skeleton(data, destination_dir, context):
     print 'Creating files in %s'  % destination_dir
     
     #generate_themed_skeletons(data['datasets'], DATA_TEMPLATE, context, '#!data-discovery/dataDetail/', env, destination_dir)
-    generate_themed_skeletons(data['projects'], PROJECT_TEMPLATE, context, '#!data-discovery/projectDetail/', env, destination_dir)
-#     sitemap_files = []
-#     sitemap_files.extend(create_sitemaps(data['waterbudget_hucs'], WB_HUC_TEMPLATE, destination_dir, 'sitemap_wb_huc', context))
-#     sitemap_files.extend(create_sitemaps(data['streamflow_gages'], SF_GAGE_TEMPLATE, destination_dir, 'sitemap_sf_gage', context))
-#     sitemap_files.extend(create_sitemaps(data['streamflow_hucs'], SF_HUC_TEMPLATE, destination_dir, 'sitemap_sf_huc', context))
-#     sitemap_files.extend(create_sitemaps(data['projects'], PROJECT_TEMPLATE, destination_dir, 'sitemap_project', context))
-#     sitemap_files.extend(create_sitemaps(data['datasets'], DATA_TEMPLATE, destination_dir, 'sitemap_data', context))
+    #generate_themed_skeletons(data['projects'], PROJECT_TEMPLATE, context, '#!data-discovery/projectDetail/', env, destination_dir)
+    generate_themed_skeletons(data['streamflow_gages'], SF_GAGE_TEMPLATE, context, '#!streamflow-stats/gage/', env, destination_dir)
 
 def main(argv):
 
@@ -73,8 +68,8 @@ def main(argv):
                }
     data = {}
 #     data = gc.get_nwc_data(geoserver, sciencebase)
-
-    data['projects'] = gc.get_project_items(sciencebase)
+#     data['projects'] = gc.get_project_items(sciencebase)
+    data['streamflow_gages'] = gc.get_streamflow_gage_features(geoserver)
     generate_skeleton(data, args.destination_dir, context)
 
 if __name__=="__main__":
