@@ -3,19 +3,22 @@ import argparse
 import math
 import requests
 
-def get_features(geoserver_endpoint, layer, attribute):
+def get_features(geoserver_endpoint, layer, attributes, id_attribute):
     response = requests.get(geoserver_endpoint + 'wfs', 
                             {'service' : 'wfs',
                              'version' : '2.0.0',
                              'request' : 'GetFeature',
                              'typeNames' : layer,
-                             'propertyName' : attribute,
+                             'propertyName' : ','.join(attributes),
                              'outputFormat' : 'json'
                              })
     response.raise_for_status()
     my_json = response.json()
+    features = my_json['features']
+    for feature in features:
+        feature['id'] = feature['properties'][id_attribute] 
     
-    return my_json['features']
+    return features
 
 def get_sciencebase_items(sciencebase_endpoint, browse_category):
     response = requests.get(sciencebase_endpoint + 'catalog/items',
@@ -58,19 +61,19 @@ def parse_args (argv):
 get waterbudget huc feature information
 '''
 def get_waterbudget_huc_fetures(geoserver):
-    return get_features(geoserver, 'NHDPlusHUCs:nationalwbdsnapshot', 'huc_12')
+    return get_features(geoserver, 'NHDPlusHUCs:nationalwbdsnapshot', ['huc_12', 'hu_12_name', 'states'], 'huc_12')
 
 '''
 get streamflow gage ids
 '''
 def get_streamflow_gage_features(geoserver):
-    return get_features(geoserver, 'NWC:gagesII', 'STAID')
+    return get_features(geoserver, 'NWC:gagesII', ['STAID', 'STANAME', 'STATE'], 'STAID')
 
 '''
 get streamflow huc features
 '''
 def get_streamflow_huc_features(geoserver):
-    return get_features(geoserver, 'NWC:huc12_se_basins_v2_local', 'huc12')
+    return get_features(geoserver, 'NWC:huc12_se_basins_v2_local', ['huc12', 'hu_12_name', 'states'], 'huc12')
 
 '''
 get sciencebase project items
