@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title%}Project Detail - {{title}}{% endblock %}
+{% block body %}
+<h1>Project Details</h1>
+<dl>
+	<dt>Title</dt>
+	<dd>{{title}}</dd>
+	<dt>Summary</dt>
+	<dd>{{summary}}</dd>
+	<dt>Source</dt>
+	<dd><a href="{{link.url}}">View Project in ScienceBase</a></dd>
+</dl>
+{% endblock %}
