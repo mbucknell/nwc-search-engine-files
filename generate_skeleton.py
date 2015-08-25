@@ -50,11 +50,12 @@ def generate_skeleton(data, destination_dir, context):
     
     print 'Creating files in %s'  % destination_dir
     
-#     generate_themed_skeletons(data['datasets'], DATA_TEMPLATE, context, '#!data-discovery/dataDetail/', env, destination_dir)
-#     generate_themed_skeletons(data['projects'], PROJECT_TEMPLATE, context, '#!data-discovery/projectDetail/', env, destination_dir)
-#     generate_themed_skeletons(data['streamflow_gages'], SF_GAGE_TEMPLATE, context, '#!streamflow-stats/gage/', env, destination_dir)
-    generate_themed_skeletons(data['streamflow_hucs'], SF_HUC_TEMPLATE, context, '#!streamflow-stats/huc/', env, destination_dir)
-
+#    generate_themed_skeletons(data['datasets'], DATA_TEMPLATE, context, '#!data-discovery/dataDetail/', env, destination_dir)
+#    generate_themed_skeletons(data['projects'], PROJECT_TEMPLATE, context, '#!data-discovery/projectDetail/', env, destination_dir)
+#    generate_themed_skeletons(data['streamflow_gages'], SF_GAGE_TEMPLATE, context, '#!streamflow-stats/gage/', env, destination_dir)
+#    generate_themed_skeletons(data['streamflow_hucs'], SF_HUC_TEMPLATE, context, '#!streamflow-stats/huc/', env, destination_dir)
+    generate_themed_skeletons(data['waterbudget_hucs'], WB_HUC_TEMPLATE, context, '#!waterbudget/huc/', env, destination_dir)
+     
 def main(argv):
 
     args = gc.parse_args(sys.argv)
@@ -67,11 +68,12 @@ def main(argv):
                'last_modified' : datetime.datetime.today().isoformat()
                }
     data = {}
-#     data = gc.get_nwc_data(geoserver, sciencebase)
-#     data['datasets'] = gc.get_project_items(sciencebase)
-#     data['projects'] = gc.get_project_items(sciencebase)
-#     data['streamflow_gages'] = gc.get_streamflow_gage_features(geoserver)
-    data['streamflow_hucs'] = gc.get_streamflow_huc_features(geoserver)
+#    data = gc.get_nwc_data(geoserver, sciencebase)
+#    data['datasets'] = gc.get_project_items(sciencebase)
+#    data['projects'] = gc.get_project_items(sciencebase)
+#    data['streamflow_gages'] = gc.get_streamflow_gage_features(geoserver)
+#    data['streamflow_hucs'] = gc.get_streamflow_huc_features(geoserver)
+    data['waterbudget_hucs'] = gc.get_waterbudget_huc_fetures(geoserver)
     generate_skeleton(data, args.destination_dir, context)
 
 if __name__=="__main__":
