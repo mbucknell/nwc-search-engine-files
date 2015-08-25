@@ -1,32 +1,8 @@
-import argparse
+import sys
 import datetime
-import math
-
+import generation_commons as gc
 from jinja2 import Template
-import requests
-
-def get_feature(geoserver_endpoint, layer, attribute):
-    response = requests.get(geoserver_endpoint + 'wfs', 
-                            {'service' : 'wfs',
-                             'version' : '2.0.0',
-                             'request' : 'GetFeature',
-                             'typeNames' : layer,
-                             'propertyName' : attribute,
-                             'outputFormat' : 'json'
-                             })
-    response.raise_for_status()
-    return response.json()
-
-def get_sciencebase_data(sciencebase_endpoint, browse_category):
-    response = requests.get(sciencebase_endpoint + 'catalog/items',
-                            {'facetTermLevelLimit' : 'false',
-                             'q' : '',
-                             'community' : 'National Water Census',
-                             'filter0' : 'browseCategory=' + browse_category,
-                             'format' : 'json'
-                             })
-    response.raise_for_status()
-    return response.json()
+import math
 
 '''
 Creates the sitemaps for the ids using template and base_file_name
@@ -59,84 +35,56 @@ def create_sitemaps(attributes, template_file_name, dest_dir, base_file_name, ba
         
         index = index + 1
     return file_names
-    
 
-if __name__=="__main__":
-    
+'''
+generate sitemap.xml and children
+  data - a Bunch describing geoserver features and sciencebase items 
+  destination_dir - a dir to put the sitemap files into
+  rootContext - a dictionary to provide context for the templates
+'''
+def generate_sitemap(data, destination_dir, context):        
     WB_HUC_TEMPLATE = 'sitemap_waterbudget_huc_template.xml'
     SF_HUC_TEMPLATE = 'sitemap_streamflow_huc_template.xml'
     SF_GAGE_TEMPLATE = 'sitemap_streamflow_gage_template.xml'
     PROJECT_TEMPLATE = 'sitemap_project_template.xml'
     DATA_TEMPLATE = 'sitemap_data_template.xml'
     INDEX_TEMPLATE = 'sitemap_index_template.xml'
-    BROWSE_TEMPLATE = 'browse_template.html'
     
-    DEFAULT_GEOSERVER = 'http://cida.usgs.gov/nwc/geoserver/'
-    DEFAULT_SCIENCEBASE = 'https://www.sciencebase.gov/'
-    DEFAULT_ROOT_URL = 'http://cida.usgs.gov/nwc/'
-    
-    parser = argparse.ArgumentParser(description='Generate sitemap.xml for NWC')
-    parser.add_argument('--geoserver', 
-                        help='Geoserver to use to retrieve HUCs and gages. Defaults to %s' % DEFAULT_GEOSERVER, 
-                        default=DEFAULT_GEOSERVER)
-    parser.add_argument('--sciencebase_url', 
-                        help='URL where the data discovery tool gets its project information. Defaults to %s' % DEFAULT_SCIENCEBASE,
-                        default=DEFAULT_SCIENCEBASE)
-    parser.add_argument('--root_url', 
-                        help='The application\'s root url. Defaults to %s' % DEFAULT_ROOT_URL,
-                        default=DEFAULT_ROOT_URL)
-    parser.add_argument('--destination_dir', 
-                        help='Destination directory for the sitemap.xml file. Defaults to the directory where the script is run.',
-                        default='')
-    args = parser.parse_args()
-    
+    print 'Creating sitemap files in %s'  % destination_dir
     sitemap_files = []
-    
-    context = {'root_url' : args.root_url,
-               'last_modified' : datetime.datetime.today().isoformat()}
-    
-    print 'Retrieving HUCs and gage IDs from %s' % args.geoserver
-    
-    waterbudget_hucs = get_feature(args.geoserver, 'NHDPlusHUCs:nationalwbdsnapshot', 'huc_12')['features']    
-    streamflow_gage_ids = get_feature(args.geoserver, 'NWC:gagesII', 'STAID')['features']
-    streamflow_hucs = get_feature(args.geoserver, 'NWC:huc12_se_basins_v2_local', 'huc12')['features']
-    
-    print 'Retrieving projects and dataset ids from %s' % args.sciencebase_url 
-            
-    projects = get_sciencebase_data(args.sciencebase_url, 'Project')['items']
-    datasets = get_sciencebase_data(args.sciencebase_url, 'Data')['items']
-    
-    print 'Creating sitemap files in %s'  % args.destination_dir
-    
-    sitemap_files.extend(create_sitemaps(waterbudget_hucs, WB_HUC_TEMPLATE, args.destination_dir, 'sitemap_wb_huc', context))
-    sitemap_files.extend(create_sitemaps(streamflow_gage_ids, SF_GAGE_TEMPLATE, args.destination_dir, 'sitemap_sf_gage', context))
-    sitemap_files.extend(create_sitemaps(streamflow_hucs, SF_HUC_TEMPLATE, args.destination_dir, 'sitemap_sf_huc', context))
-    sitemap_files.extend(create_sitemaps(projects, PROJECT_TEMPLATE, args.destination_dir, 'sitemap_project', context))
-    sitemap_files.extend(create_sitemaps(datasets, DATA_TEMPLATE, args.destination_dir, 'sitemap_data', context))
-    
+    sitemap_files.extend(create_sitemaps(data['waterbudget_hucs'], WB_HUC_TEMPLATE, destination_dir, 'sitemap_wb_huc', context))
+    sitemap_files.extend(create_sitemaps(data['streamflow_gages'], SF_GAGE_TEMPLATE, destination_dir, 'sitemap_sf_gage', context))
+    sitemap_files.extend(create_sitemaps(data['streamflow_hucs'], SF_HUC_TEMPLATE, destination_dir, 'sitemap_sf_huc', context))
+    sitemap_files.extend(create_sitemaps(data['projects'], PROJECT_TEMPLATE, destination_dir, 'sitemap_project', context))
+    sitemap_files.extend(create_sitemaps(data['datasets'], DATA_TEMPLATE, destination_dir, 'sitemap_data', context))
+
     template_index_file = open(INDEX_TEMPLATE, 'r')
     template = Template(template_index_file.read())
     template_index_file.close()
     
     index_context = context.copy()
     index_context['sitemap_files'] = sitemap_files
-    sitemap_file = open('%ssitemap.xml' % args.destination_dir, 'w')
+    sitemap_file = open('%ssitemap.xml' % destination_dir, 'w')
         
     sitemap_file.write(template.render(index_context))
     sitemap_file.close()
+
+
+def main(argv):
+
+    args = gc.parse_args(sys.argv)
+    geoserver = args.geoserver
+    sciencebase = args.sciencebase_url
     
-    # Create browse.html
-    print 'Create browse.html'
-    template_browse_file = open(BROWSE_TEMPLATE)
-    browse_template = Template(template_browse_file.read())
-    template_browse_file.close()
     
-    browse_context = context.copy()
-    browse_context['waterbudget_hucs'] = waterbudget_hucs
-    browse_context['streamflow_gage_ids'] = streamflow_gage_ids
-    browse_context['streamflow_hucs'] = streamflow_hucs
-    browse_context['projects'] = projects
-    browse_context['datasets'] = datasets
-    browse_file = open('%sbrowse.html' % args.destination_dir, 'w')
-    browse_file.write(browse_template.render(browse_context))
-    browse_file.close()
+    context = {
+               'root_url' : args.root_url,
+               'last_modified' : datetime.datetime.today().isoformat()
+               }
+    data = gc.get_nwc_data(geoserver, sciencebase)
+
+    generate_sitemap(data, args.destination_dir, context)
+
+if __name__=="__main__":
+    main(sys.argv)
+    print 'Done'
