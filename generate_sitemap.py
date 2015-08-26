@@ -3,6 +3,7 @@ import datetime
 import generation_commons as gc
 from jinja2 import Template
 import math
+import os
 
 '''
 Creates the sitemaps for the ids using template and base_file_name
@@ -20,7 +21,7 @@ def create_sitemaps(attributes, template_file_name, dest_dir, base_file_name, ba
     file_names = []
     while index <= file_count:
         sitemap_filename = '%s%d.xml' % (base_file_name, index)
-        this_file_name = '%s%s' % (dest_dir, sitemap_filename)
+        this_file_name = os.path.join(dest_dir, sitemap_filename)
         file_names.append(sitemap_filename)
         
         file = open(this_file_name, 'w')
@@ -43,12 +44,13 @@ generate sitemap.xml and children
   rootContext - a dictionary to provide context for the templates
 '''
 def generate_sitemap(data, destination_dir, context):        
-    WB_HUC_TEMPLATE = 'sitemap_waterbudget_huc_template.xml'
-    SF_HUC_TEMPLATE = 'sitemap_streamflow_huc_template.xml'
-    SF_GAGE_TEMPLATE = 'sitemap_streamflow_gage_template.xml'
-    PROJECT_TEMPLATE = 'sitemap_project_template.xml'
-    DATA_TEMPLATE = 'sitemap_data_template.xml'
-    INDEX_TEMPLATE = 'sitemap_index_template.xml'
+    BASE_DIR = os.path.join('templates', 'sitemap')
+    WB_HUC_TEMPLATE = os.path.join(BASE_DIR, 'waterbudget_huc.xml')
+    SF_HUC_TEMPLATE = os.path.join(BASE_DIR, 'streamflow_huc.xml')
+    SF_GAGE_TEMPLATE = os.path.join(BASE_DIR, 'streamflow_gage.xml')
+    PROJECT_TEMPLATE = os.path.join(BASE_DIR, 'project.xml')
+    DATA_TEMPLATE = os.path.join(BASE_DIR, 'data.xml')
+    INDEX_TEMPLATE = os.path.join(BASE_DIR, 'index.xml')
     
     print 'Creating sitemap files in %s'  % destination_dir
     sitemap_files = []
@@ -64,7 +66,7 @@ def generate_sitemap(data, destination_dir, context):
     
     index_context = context.copy()
     index_context['sitemap_files'] = sitemap_files
-    sitemap_file = open('%ssitemap.xml' % destination_dir, 'w')
+    sitemap_file = open(os.path.join(destination_dir, 'sitemap.xml'), 'w')
         
     sitemap_file.write(template.render(index_context))
     sitemap_file.close()
