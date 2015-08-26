@@ -42,7 +42,7 @@ generate skeletal versions of all pages in the app
   rootContext - a dictionary to provide context for the templates
 '''
 def generate_skeleton(data, destination_dir, context):
-    BASE_DIR =       'templates/skeleton/'
+    BASE_DIR =       os.path.join('templates', 'skeleton')
     WB_HUC_TEMPLATE = 'waterbudget_huc.html'
     SF_HUC_TEMPLATE = 'streamflow_huc.html'
     SF_GAGE_TEMPLATE = 'streamflow_gage.html'
