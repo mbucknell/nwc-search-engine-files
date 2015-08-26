@@ -2,6 +2,7 @@ import sys
 import argparse
 import math
 import requests
+from types import NoneType
 
 """
 Retrieve a list of features from a geoserver instance. The 'id' attribute on each returned 
@@ -9,7 +10,7 @@ list item is set by the 'id_attribute' parameter. Each returned item is a dictio
     geoserver_endpoint - String url
     layer - String layer name
     attributes - list of String attribute names
-    id_attribute - String attribute name. Should be listed in the 'attributes' param. 
+    id_attribute - String attribute name. Must also be listed in the 'attributes' param. 
 """
 def get_features(geoserver_endpoint, layer, attributes, id_attribute):
     response = requests.get(geoserver_endpoint + 'wfs', 
@@ -21,12 +22,30 @@ def get_features(geoserver_endpoint, layer, attributes, id_attribute):
                              'outputFormat' : 'json'
                              })
     response.raise_for_status()
+    response.encoding = 'utf-8'
+    
     my_json = response.json()
     features = my_json['features']
+    features_with_ids = []
     for feature in features:
-        feature['id'] = feature['properties'][id_attribute] 
+        properties = feature['properties']
+        id_value = properties[id_attribute]
+        if type(id_value) is NoneType :
+            if properties['states'] == 'CAN' or properties['states'] == 'MEX': 
+                print "Skipping the following Canadian or Mexican WFS feature that isn't really a HUC"
+                print feature
+            else:
+                raise RuntimeError(
+                                   "The following feature did not have a value for the id attribute '{0}'. ".format(id_attribute) +
+                                   "While it is expected that Mexican or Canadian features will lack the id, " +
+                                   "this feature does not appear to be Mexican or Canadian: "
+                                   + str(feature)
+                                   )
+        else:
+            feature['id'] = id_value
+            features_with_ids.append(feature)  
     
-    return features
+    return features_with_ids
 """
 Retrieve a list of NWC project or data items from sciencebase. Each returned item is a dictionary.
     sciencebase_endpoint - String url for sciencebase

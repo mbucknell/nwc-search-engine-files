@@ -7,7 +7,7 @@ import hashlib
 import os
 from jinja2 import FileSystemLoader
 from jinja2.environment import Environment
-
+import codecs
 
 """
     generate all of the skeleton html files of a particular kind
@@ -21,16 +21,20 @@ from jinja2.environment import Environment
 def generate_themed_skeletons(theme_data, template_file_name, context, theme_path, env, destination_dir):
     
     template = env.get_template(template_file_name)
-    
-    for datum in theme_data:
-        datum_url = context['root_url'] + theme_path + datum['id']
-        datum_file_name = os.path.join(destination_dir, hashlib.sha1(datum_url).hexdigest() + ".html")
-        print 'saving skeletal representation of {0} to {1}'.format(datum_url, datum_file_name)
-        datum_file = open(datum_file_name, 'w')
-        merged_context = context.copy()
-        merged_context.update(datum)
-        datum_file.write(template.render(merged_context))
-        datum_file.close()
+    data_length = len(theme_data)
+    for index, datum in enumerate(theme_data):
+        try:
+            datum_url = context['root_url'] + theme_path + datum['id']
+            datum_file_name = os.path.join(destination_dir, hashlib.sha1(datum_url).hexdigest() + ".html")
+            print 'saving skeletal representation of {0} to {1} ({2}/{3})'.format(datum_url, datum_file_name, index, data_length)
+            datum_file = codecs.open(datum_file_name, 'w', 'utf-8')
+            merged_context = context.copy()
+            merged_context.update(datum)
+            datum_file.write(template.render(merged_context))
+            datum_file.close()
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+            raise
 '''
 generate skeletal versions of all pages in the app
   data - a Bunch describing geoserver features and sciencebase items 
@@ -49,13 +53,13 @@ def generate_skeleton(data, destination_dir, context):
     env.loader = FileSystemLoader(BASE_DIR)
     
     print 'Creating files in %s'  % destination_dir
-    
-#    generate_themed_skeletons(data['datasets'], DATA_TEMPLATE, context, '#!data-discovery/dataDetail/', env, destination_dir)
-#    generate_themed_skeletons(data['projects'], PROJECT_TEMPLATE, context, '#!data-discovery/projectDetail/', env, destination_dir)
-#    generate_themed_skeletons(data['streamflow_gages'], SF_GAGE_TEMPLATE, context, '#!streamflow-stats/gage/', env, destination_dir)
-#    generate_themed_skeletons(data['streamflow_hucs'], SF_HUC_TEMPLATE, context, '#!streamflow-stats/huc/', env, destination_dir)
+
+    generate_themed_skeletons(data['datasets'], DATA_TEMPLATE, context, '#!data-discovery/dataDetail/', env, destination_dir)
+    generate_themed_skeletons(data['projects'], PROJECT_TEMPLATE, context, '#!data-discovery/projectDetail/', env, destination_dir)
+    generate_themed_skeletons(data['streamflow_gages'], SF_GAGE_TEMPLATE, context, '#!streamflow-stats/gage/', env, destination_dir)
+    generate_themed_skeletons(data['streamflow_hucs'], SF_HUC_TEMPLATE, context, '#!streamflow-stats/huc/', env, destination_dir)
     generate_themed_skeletons(data['waterbudget_hucs'], WB_HUC_TEMPLATE, context, '#!waterbudget/huc/', env, destination_dir)
-     
+
 def main(argv):
 
     args = gc.parse_args(sys.argv)
@@ -64,16 +68,11 @@ def main(argv):
     
     
     context = {
-               'root_url' : args.root_url,
-               'last_modified' : datetime.datetime.today().isoformat()
+               u'root_url' : u'' + args.root_url,
+               u'last_modified' : u'' + datetime.datetime.today().isoformat()
                }
     data = {}
-#    data = gc.get_nwc_data(geoserver, sciencebase)
-#    data['datasets'] = gc.get_project_items(sciencebase)
-#    data['projects'] = gc.get_project_items(sciencebase)
-#    data['streamflow_gages'] = gc.get_streamflow_gage_features(geoserver)
-#    data['streamflow_hucs'] = gc.get_streamflow_huc_features(geoserver)
-    data['waterbudget_hucs'] = gc.get_waterbudget_huc_fetures(geoserver)
+    data = gc.get_nwc_data(geoserver, sciencebase)
     generate_skeleton(data, args.destination_dir, context)
 
 if __name__=="__main__":
