@@ -26,7 +26,7 @@ def generate_themed_skeletons(theme_data, template_file_name, context, theme_pat
         try:
             datum_url = context['root_url'] + theme_path + datum['id']
             datum_file_name = os.path.join(destination_dir, hashlib.sha1(datum_url).hexdigest() + ".html")
-            print 'saving skeletal representation of {0} to {1} ({2}/{3})'.format(datum_url, datum_file_name, index, data_length)
+            print 'saving skeletal representation of {0} to {1} ({2}/{3})'.format(datum_url, datum_file_name, index+1, data_length)
             datum_file = codecs.open(datum_file_name, 'w', 'utf-8')
             merged_context = context.copy()
             merged_context.update(datum)
