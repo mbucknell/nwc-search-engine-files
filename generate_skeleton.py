@@ -49,7 +49,7 @@ def generate_skeleton(data, destination_dir, context):
     PROJECT_TEMPLATE = 'project.html'
     DATA_TEMPLATE = 'data.html'
     
-    env = Environment()
+    env = Environment(autoescape=True)
     env.loader = FileSystemLoader(TEMPLATE_BASE_DIR)
     
     print 'Creating files in %s'  % destination_dir

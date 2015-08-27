@@ -61,7 +61,7 @@ def generate_sitemap(data, destination_dir, context):
     DATA_TEMPLATE = 'data.xml'
     INDEX_TEMPLATE = 'index.xml'
     
-    env = Environment()
+    env = Environment(autoescape=True)
     env.loader = FileSystemLoader(TEMPLATE_BASE_DIR)
     
     print 'Creating sitemap files in %s'  % destination_dir
