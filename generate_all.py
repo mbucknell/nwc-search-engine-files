@@ -2,7 +2,6 @@ import sys
 import datetime
 import generation_commons as gc
 import generate_sitemap
-import generate_browse
 import generate_skeleton
 
 
@@ -20,7 +19,6 @@ def main(argv):
                }
     data = gc.get_nwc_data(geoserver, sciencebase)
 
-    generate_browse.generate_root_browse(data, destination_dir, context)
     generate_sitemap.generate_sitemap(data, destination_dir, context)
     generate_skeleton.generate_skeleton(data, destination_dir, context)
     
