@@ -2,21 +2,55 @@ import sys
 import argparse
 import math
 import requests
+from types import NoneType
 
-def get_features(geoserver_endpoint, layer, attribute):
+"""
+Retrieve a list of features from a geoserver instance. The 'id' attribute on each returned 
+list item is set by the 'id_attribute' parameter. Each returned item is a dictionary.
+    geoserver_endpoint - String url
+    layer - String layer name
+    attributes - list of String attribute names
+    id_attribute - String attribute name. Must also be listed in the 'attributes' param. 
+"""
+def get_features(geoserver_endpoint, layer, attributes, id_attribute):
     response = requests.get(geoserver_endpoint + 'wfs', 
                             {'service' : 'wfs',
                              'version' : '2.0.0',
                              'request' : 'GetFeature',
                              'typeNames' : layer,
-                             'propertyName' : attribute,
+                             'propertyName' : ','.join(attributes),
                              'outputFormat' : 'json'
                              })
     response.raise_for_status()
-    my_json = response.json()
+    response.encoding = 'utf-8'
     
-    return my_json['features']
-
+    my_json = response.json()
+    features = my_json['features']
+    features_with_ids = []
+    for feature in features:
+        properties = feature['properties']
+        id_value = properties[id_attribute]
+        if type(id_value) is NoneType :
+            if properties['states'] == 'CAN' or properties['states'] == 'MEX': 
+                print "Skipping the following Canadian or Mexican WFS feature that isn't really a HUC"
+                print feature
+            else:
+                raise RuntimeError(
+                                   "The following feature did not have a value for the id attribute '{0}'. ".format(id_attribute) +
+                                   "While it is expected that Mexican or Canadian features will lack the id, " +
+                                   "this feature does not appear to be Mexican or Canadian: "
+                                   + str(feature)
+                                   )
+        else:
+            feature['id'] = id_value
+            features_with_ids.append(feature)  
+    
+    return features_with_ids
+"""
+Retrieve a list of NWC project or data items from sciencebase. Each returned item is a dictionary.
+    sciencebase_endpoint - String url for sciencebase
+    browse_category - String category. ex: 'Project', 'Datasets'
+"""
 def get_sciencebase_items(sciencebase_endpoint, browse_category):
     response = requests.get(sciencebase_endpoint + 'catalog/items',
                             {'facetTermLevelLimit' : 'false',
@@ -58,19 +92,19 @@ def parse_args (argv):
 get waterbudget huc feature information
 '''
 def get_waterbudget_huc_fetures(geoserver):
-    return get_features(geoserver, 'NHDPlusHUCs:nationalwbdsnapshot', 'huc_12')
+    return get_features(geoserver, 'NHDPlusHUCs:nationalwbdsnapshot', ['huc_12', 'hu_12_name', 'states'], 'huc_12')
 
 '''
 get streamflow gage ids
 '''
 def get_streamflow_gage_features(geoserver):
-    return get_features(geoserver, 'NWC:gagesII', 'STAID')
+    return get_features(geoserver, 'NWC:gagesII', ['STAID', 'STANAME', 'STATE'], 'STAID')
 
 '''
 get streamflow huc features
 '''
 def get_streamflow_huc_features(geoserver):
-    return get_features(geoserver, 'NWC:huc12_se_basins_v2_local', 'huc12')
+    return get_features(geoserver, 'NWC:huc12_se_basins_v2_local', ['huc12', 'hu_12_name', 'states'], 'huc12')
 
 '''
 get sciencebase project items
@@ -86,7 +120,7 @@ def get_dataset_items(sciencebase):
 
 '''
 get nwc data from geoserver and sciencebase.
-returns a 'Bunch' of data from the servers
+returns a dictionary of data from the servers
 '''
 def get_nwc_data(geoserver, sciencebase):
     print 'Retrieving HUCs and gage IDs from %s' % geoserver

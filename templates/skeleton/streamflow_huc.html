@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title%}Streamflow Statistics Calculator - {{properties.hu_12_name}}{% endblock %}
+{% block description %}Calculate streamflow statistics for the &quot;{{properties.hu_12_name}}&quot;({{properties.huc12}}) watershed.{% endblock %}
+{% block body %}
+<h1>HUC Information</h1>
+<dl>
+	<dt>HUC Name</dt>
+	<dd>{{properties.hu_12_name}}</dd>
+	<dt>HUC ID</dt>
+	<dd>{{properties.huc12}}</dd>
+	<dt>HUC States</dt>
+	<dd>{{properties.states}}</dd>
+</dl>
+<p>Software to calculate these statistics is also available as an open-source R package on GitHub:<a href="https://github.com/USGS-R/EflowStats">EflowStats</a>.</p>
+<p>Complete streamflow data description is available <a href="http://pubs.er.usgs.gov/publication/sir20145231">in this report</a></p>
+{% include 'streamflow_stat_form.html' %}
+{% endblock %}

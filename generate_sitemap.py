@@ -2,25 +2,35 @@ import sys
 import datetime
 import generation_commons as gc
 from jinja2 import Template
+from jinja2 import FileSystemLoader
+from jinja2.environment import Environment
 import math
+import os
 
 '''
 Creates the sitemaps for the ids using template and base_file_name
 Return the list of sitemap files created
+    attributes - list of dictionaries that contain the data
+    template_file_name - String template file name
+    dest_dir - String destination dir
+    base_file_name - String base file name to write the sitemap out 
+        to within the dir defined by the 'dest_dir' parameter. 
+        Will be suffixed by a number. Sitemaps must be paged like 
+        this since sitemaps have a maximum number of links per file.
+    base_context - dictionary of information to provide to templates  
+    env - jinja2.environment
 '''
-def create_sitemaps(attributes, template_file_name, dest_dir, base_file_name, base_context):
+def create_sitemaps(attributes, template_file_name, dest_dir, base_file_name, base_context, env):
     SITEMAP_URL_LIMIT = 50000
 
-    template_file = open(template_file_name, 'r')
-    template = Template(template_file.read())
-    template_file.close()
+    template = env.get_template(template_file_name)
     
     file_count = math.ceil(len(attributes) / float(SITEMAP_URL_LIMIT))
     index = 1
     file_names = []
     while index <= file_count:
         sitemap_filename = '%s%d.xml' % (base_file_name, index)
-        this_file_name = '%s%s' % (dest_dir, sitemap_filename)
+        this_file_name = os.path.join(dest_dir, sitemap_filename)
         file_names.append(sitemap_filename)
         
         file = open(this_file_name, 'w')
@@ -38,34 +48,35 @@ def create_sitemaps(attributes, template_file_name, dest_dir, base_file_name, ba
 
 '''
 generate sitemap.xml and children
-  data - a Bunch describing geoserver features and sciencebase items 
+  data - a dictionary describing geoserver features and sciencebase items 
   destination_dir - a dir to put the sitemap files into
   rootContext - a dictionary to provide context for the templates
 '''
 def generate_sitemap(data, destination_dir, context):        
-    WB_HUC_TEMPLATE = 'sitemap_waterbudget_huc_template.xml'
-    SF_HUC_TEMPLATE = 'sitemap_streamflow_huc_template.xml'
-    SF_GAGE_TEMPLATE = 'sitemap_streamflow_gage_template.xml'
-    PROJECT_TEMPLATE = 'sitemap_project_template.xml'
-    DATA_TEMPLATE = 'sitemap_data_template.xml'
-    INDEX_TEMPLATE = 'sitemap_index_template.xml'
+    TEMPLATE_BASE_DIR = os.path.join('templates', 'sitemap')
+    WB_HUC_TEMPLATE = 'waterbudget_huc.xml'
+    SF_HUC_TEMPLATE = 'streamflow_huc.xml'
+    SF_GAGE_TEMPLATE = 'streamflow_gage.xml'
+    PROJECT_TEMPLATE = 'project.xml'
+    DATA_TEMPLATE = 'data.xml'
+    INDEX_TEMPLATE = 'index.xml'
+    
+    env = Environment(autoescape=True)
+    env.loader = FileSystemLoader(TEMPLATE_BASE_DIR)
     
     print 'Creating sitemap files in %s'  % destination_dir
     sitemap_files = []
-    sitemap_files.extend(create_sitemaps(data['waterbudget_hucs'], WB_HUC_TEMPLATE, destination_dir, 'sitemap_wb_huc', context))
-    sitemap_files.extend(create_sitemaps(data['streamflow_gages'], SF_GAGE_TEMPLATE, destination_dir, 'sitemap_sf_gage', context))
-    sitemap_files.extend(create_sitemaps(data['streamflow_hucs'], SF_HUC_TEMPLATE, destination_dir, 'sitemap_sf_huc', context))
-    sitemap_files.extend(create_sitemaps(data['projects'], PROJECT_TEMPLATE, destination_dir, 'sitemap_project', context))
-    sitemap_files.extend(create_sitemaps(data['datasets'], DATA_TEMPLATE, destination_dir, 'sitemap_data', context))
+    sitemap_files.extend(create_sitemaps(data['waterbudget_hucs'], WB_HUC_TEMPLATE, destination_dir, 'sitemap_wb_huc', context, env))
+    sitemap_files.extend(create_sitemaps(data['streamflow_gages'], SF_GAGE_TEMPLATE, destination_dir, 'sitemap_sf_gage', context, env))
+    sitemap_files.extend(create_sitemaps(data['streamflow_hucs'], SF_HUC_TEMPLATE, destination_dir, 'sitemap_sf_huc', context, env))
+    sitemap_files.extend(create_sitemaps(data['projects'], PROJECT_TEMPLATE, destination_dir, 'sitemap_project', context, env))
+    sitemap_files.extend(create_sitemaps(data['datasets'], DATA_TEMPLATE, destination_dir, 'sitemap_data', context, env))
 
-    template_index_file = open(INDEX_TEMPLATE, 'r')
-    template = Template(template_index_file.read())
-    template_index_file.close()
-    
+    template = env.get_template(INDEX_TEMPLATE)
+        
     index_context = context.copy()
     index_context['sitemap_files'] = sitemap_files
-    sitemap_file = open('%ssitemap.xml' % destination_dir, 'w')
-        
+    sitemap_file = open(os.path.join(destination_dir, 'sitemap.xml'), 'w')    
     sitemap_file.write(template.render(index_context))
     sitemap_file.close()
 

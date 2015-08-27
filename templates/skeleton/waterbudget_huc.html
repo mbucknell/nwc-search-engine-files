@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title%}Available Water Budget Components - {{properties.hu_12_name}}{% endblock %}
+{% block description %}
+Visualize and download water budget data for the &quot;{{properties.hu_12_name}}&quot;({{properties.huc_12}}) watershed.
+Compare this watershed to another watershed. Available data include precipiatation, evapotranspiration, and water use.
+{% endblock %}
+{% block body %}
+
+<h1>Precipitation and Evapotranspiration for the Selected Watershed</h1>
+
+<h1>HUC Information</h1>
+<dl>
+	<dt>HUC Name</dt>
+	<dd>{{properties.hu_12_name}}</dd>
+	<dt>HUC ID</dt>
+	<dd>{{properties.huc_12}}</dd>
+	<dt>HUC States</dt>
+	<dd>{{properties.states}}</dd>
+</dl>
+
+<p>Precipitation and Evapotranspiration data derived from the <a href="http://daymet.ornl.gov/">Daymet</a>  and <a href="http://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/ssebopeta/monthly">SSEBop</a> datasets, respectively.</p>
+<p>Drag the handles at then end of the date axis to zoom in. Drag the window you are zoomed on to pan the date window through time.</p>
+<p>To access custom subsets of these and other data, visit the Geo Data Portal .</p>
+<p>Siczewicz, Peter. U.S. Historical Counties (Generalized .001 deg). Dataset. Emily Kelley, digital comp. Atlas of Historical County Boundaries, ed. by John H. Long. Chicago: The Newberry Library, 2011.
+Available online from <a href="http://publications.newberry.org/ahcbp">http://publications.newberry.org/ahcbp</a></p> 
+
+{% endblock %}

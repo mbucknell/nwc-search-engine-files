@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title%}Project Detail - {{title}}{% endblock %}
+{% block description %}View the details of the &quot;{{title}}&quot; project that contributes data to the National Water Census Data Portal.{% endblock %}
+{% block body %}
+<h1>Project Details</h1>
+<dl>
+	<dt>Title</dt>
+	<dd>{{title}}</dd>
+	<dt>Summary</dt>
+	<dd>{{summary}}</dd>
+	<dt>Source</dt>
+	<dd><a href="{{link.url}}">View Project in ScienceBase</a></dd>
+</dl>
+{% endblock %}

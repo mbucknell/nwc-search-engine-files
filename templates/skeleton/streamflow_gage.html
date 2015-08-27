@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title%}Streamflow Statistics Calculator - {{properties.STANAME}}{% endblock %}
+{% block description %}Calculate streamflow statistics for the &quot;{{properties.STANAME}}&quot;({{properties.STAID}}) gage.{% endblock %}
+{% block body %}
+<h1>Gage Information</h1>
+<dl>
+	<dt>Gage Name</dt>
+	<dd>{{properties.STANAME}}</dd>
+	<dt>Gage ID</dt>
+	<dd>{{properties.STAID}}</dd>
+	<dt>Gage State</dt>
+	<dd>{{properties.STATE}}</dd>
+</dl>
+<p>Detailed gage information is available via <a href="http://waterdata.usgs.gov/nwis/nwisman/?site_no={{properties.STAID}}">NWIS-Web</a>.</p>
+{% include 'streamflow_stat_form.html' %}
+{% endblock %}
