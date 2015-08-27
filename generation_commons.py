@@ -3,6 +3,8 @@ import argparse
 import math
 import requests
 from types import NoneType
+import os
+import errno
 
 """
 Retrieve a list of features from a geoserver instance. The 'id' attribute on each returned 
@@ -132,3 +134,10 @@ def get_nwc_data(geoserver, sciencebase):
             'projects' : get_project_items(sciencebase),
             'datasets' : get_dataset_items(sciencebase),
     }
+
+def make_sure_path_exists(path):
+    try:
+        os.makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise

@@ -48,17 +48,19 @@ def generate_skeleton(data, destination_dir, context):
     SF_GAGE_TEMPLATE = 'streamflow_gage.html'
     PROJECT_TEMPLATE = 'project.html'
     DATA_TEMPLATE = 'data.html'
-    
+    SKELETON_DIR = 'skeleton'
+    skeleton_destination_dir = os.path.join(destination_dir, SKELETON_DIR)
+    gc.make_sure_path_exists(skeleton_destination_dir)
     env = Environment(autoescape=True)
     env.loader = FileSystemLoader(TEMPLATE_BASE_DIR)
     
-    print 'Creating files in %s'  % destination_dir
+    print 'Creating files in %s'  % skeleton_destination_dir
 
-    generate_themed_skeletons(data['datasets'], DATA_TEMPLATE, context, '#!data-discovery/dataDetail/', env, destination_dir)
-    generate_themed_skeletons(data['projects'], PROJECT_TEMPLATE, context, '#!data-discovery/projectDetail/', env, destination_dir)
-    generate_themed_skeletons(data['streamflow_gages'], SF_GAGE_TEMPLATE, context, '#!streamflow-stats/gage/', env, destination_dir)
-    generate_themed_skeletons(data['streamflow_hucs'], SF_HUC_TEMPLATE, context, '#!streamflow-stats/huc/', env, destination_dir)
-    generate_themed_skeletons(data['waterbudget_hucs'], WB_HUC_TEMPLATE, context, '#!waterbudget/huc/', env, destination_dir)
+    generate_themed_skeletons(data['datasets'], DATA_TEMPLATE, context, '#!data-discovery/dataDetail/', env, skeleton_destination_dir)
+    generate_themed_skeletons(data['projects'], PROJECT_TEMPLATE, context, '#!data-discovery/projectDetail/', env, skeleton_destination_dir)
+    generate_themed_skeletons(data['streamflow_gages'], SF_GAGE_TEMPLATE, context, '#!streamflow-stats/gage/', env, skeleton_destination_dir)
+    generate_themed_skeletons(data['streamflow_hucs'], SF_HUC_TEMPLATE, context, '#!streamflow-stats/huc/', env, skeleton_destination_dir)
+    generate_themed_skeletons(data['waterbudget_hucs'], WB_HUC_TEMPLATE, context, '#!waterbudget/huc/', env, skeleton_destination_dir)
 
 def main(argv):
 

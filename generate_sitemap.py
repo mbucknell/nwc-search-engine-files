@@ -60,23 +60,25 @@ def generate_sitemap(data, destination_dir, context):
     PROJECT_TEMPLATE = 'project.xml'
     DATA_TEMPLATE = 'data.xml'
     INDEX_TEMPLATE = 'index.xml'
-    
+    SITEMAP_DIR = 'sitemap'
+    sitemap_destination_dir = os.path.join(destination_dir, SITEMAP_DIR)
+    gc.make_sure_path_exists(sitemap_destination_dir)
     env = Environment(autoescape=True)
     env.loader = FileSystemLoader(TEMPLATE_BASE_DIR)
     
-    print 'Creating sitemap files in %s'  % destination_dir
+    print 'Creating sitemap files in %s'  % sitemap_destination_dir
     sitemap_files = []
-    sitemap_files.extend(create_sitemaps(data['waterbudget_hucs'], WB_HUC_TEMPLATE, destination_dir, 'sitemap_wb_huc', context, env))
-    sitemap_files.extend(create_sitemaps(data['streamflow_gages'], SF_GAGE_TEMPLATE, destination_dir, 'sitemap_sf_gage', context, env))
-    sitemap_files.extend(create_sitemaps(data['streamflow_hucs'], SF_HUC_TEMPLATE, destination_dir, 'sitemap_sf_huc', context, env))
-    sitemap_files.extend(create_sitemaps(data['projects'], PROJECT_TEMPLATE, destination_dir, 'sitemap_project', context, env))
-    sitemap_files.extend(create_sitemaps(data['datasets'], DATA_TEMPLATE, destination_dir, 'sitemap_data', context, env))
+    sitemap_files.extend(create_sitemaps(data['waterbudget_hucs'], WB_HUC_TEMPLATE, sitemap_destination_dir, 'sitemap_wb_huc', context, env))
+    sitemap_files.extend(create_sitemaps(data['streamflow_gages'], SF_GAGE_TEMPLATE, sitemap_destination_dir, 'sitemap_sf_gage', context, env))
+    sitemap_files.extend(create_sitemaps(data['streamflow_hucs'], SF_HUC_TEMPLATE, sitemap_destination_dir, 'sitemap_sf_huc', context, env))
+    sitemap_files.extend(create_sitemaps(data['projects'], PROJECT_TEMPLATE, sitemap_destination_dir, 'sitemap_project', context, env))
+    sitemap_files.extend(create_sitemaps(data['datasets'], DATA_TEMPLATE, sitemap_destination_dir, 'sitemap_data', context, env))
 
     template = env.get_template(INDEX_TEMPLATE)
         
     index_context = context.copy()
     index_context['sitemap_files'] = sitemap_files
-    sitemap_file = open(os.path.join(destination_dir, 'sitemap.xml'), 'w')    
+    sitemap_file = open(os.path.join(sitemap_destination_dir, 'sitemap.xml'), 'w')    
     sitemap_file.write(template.render(index_context))
     sitemap_file.close()
 

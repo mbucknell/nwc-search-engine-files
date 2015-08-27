@@ -4,15 +4,7 @@ import generation_commons as gc
 import generate_sitemap
 import generate_browse
 import generate_skeleton
-import os
-import errno
 
-def make_sure_path_exists(path):
-    try:
-        os.makedirs(path)
-    except OSError as exception:
-        if exception.errno != errno.EEXIST:
-            raise
 
 def main(argv):
 
@@ -20,7 +12,7 @@ def main(argv):
     geoserver = args.geoserver
     sciencebase = args.sciencebase_url
     destination_dir = args.destination_dir
-    make_sure_path_exists(destination_dir)
+    gc.make_sure_path_exists(destination_dir)
     
     context = {
                'root_url' : args.root_url,
