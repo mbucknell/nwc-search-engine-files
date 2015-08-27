@@ -37,7 +37,7 @@ def generate_themed_skeletons(theme_data, template_file_name, context, theme_pat
             raise
 '''
 generate skeletal versions of all pages in the app
-  data - a Bunch describing geoserver features and sciencebase items 
+  data - a dictionary describing geoserver features and sciencebase items 
   destination_dir - a dir to put the sitemap files into
   rootContext - a dictionary to provide context for the templates
 '''
