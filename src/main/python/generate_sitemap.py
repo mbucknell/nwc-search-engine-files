@@ -61,8 +61,7 @@ def generate_sitemap(data, destination_dir, context):
     DATA_TEMPLATE = 'data.xml'
     INDEX_TEMPLATE = 'index.xml'
     HOME_TEMPLATE = 'home.xml'
-    SITEMAP_DIR = 'sitemap'
-    sitemap_destination_dir = os.path.join(destination_dir, SITEMAP_DIR)
+    sitemap_destination_dir = destination_dir
     gc.make_sure_path_exists(sitemap_destination_dir)
     env = Environment(autoescape=True)
     env.loader = FileSystemLoader(TEMPLATE_BASE_DIR)
