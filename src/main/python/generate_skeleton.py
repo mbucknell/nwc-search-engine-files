@@ -71,7 +71,7 @@ def main(argv):
     
     context = {
                u'root_url' : u'' + args.root_url,
-               u'last_modified' : u'' + datetime.datetime.today().isoformat()
+               u'last_modified' : u'' + datetime.datetime.now().strftime('%Y-%m-%d')
                }
     data = {}
     data = gc.get_nwc_data(geoserver, sciencebase)

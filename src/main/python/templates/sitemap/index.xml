@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-	<url>
-		<loc>{{ root_url }}</loc>
-		<lastmod>{{ last_modified }}</lastmod>
-	</url>
-	
 	{% for sitemap in sitemap_files %}
 	<sitemap>
    		<loc>{{ root_url }}{{ sitemap }}</loc>
