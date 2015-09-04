@@ -155,33 +155,48 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-<profiles>
+	<profiles>
 		<profile>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<id>generate-search-engine-files-mac-and-linux</id>
 			<build>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.4.0</version>
-					<executions>
-						<execution>
-							<phase>prepare-package</phase>
-							<goals>
-								<goal>exec</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<executable>bash </executable>
-						<workingDirectory>src/main/python</workingDirectory>
-						<commandlineArgs>generate_all.sh ${nwc.search-engine-files.web-accessible-dir} http://cida.usgs.gov/nwc/geoserver/</commandlineArgs>
-					</configuration>
-				</plugin>
-			</plugins>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.4.0</version>
+						<executions>
+							<execution>
+								<id>sitemap-generation</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>bash </executable>
+									<workingDirectory>src/main/python</workingDirectory>
+									<commandlineArgs>generate_sitemap.sh ${nwc.search-engine-files.web-accessible-dir} http://cida.usgs.gov/nwc/geoserver/</commandlineArgs>
+								</configuration>
+							</execution>
+							<execution>
+								<id>skeleton-generation</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>bash </executable>
+									<workingDirectory>src/main/python</workingDirectory>
+									<commandlineArgs>generate_skeleton.sh ${project.build.outputDirectory}/skeleton http://cida.usgs.gov/nwc/geoserver/</commandlineArgs>
+								</configuration>
+							</execution>
+						</executions>
+
+					
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 	</profiles>
