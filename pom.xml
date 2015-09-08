@@ -109,19 +109,19 @@
 	</developers>
 	<scm>
 		<url>https://github.com/USGS-CIDA/nwc</url>
-		<connection>scm:git:git@cida-eros-stash.er.usgs.gov:7999/nwc/nwc-sitemap.git</connection>
-		<developerConnection>scm:git:git@cida-eros-stash.er.usgs.gov:7999/nwc/nwc-sitemap.git</developerConnection>
+		<connection>scm:git:git@github.com:USGS-CIDA/nwc-search-engine-files.git</connection>
+		<developerConnection>scm:git:git@github.com:USGS-CIDA/nwc-search-engine-files.git</developerConnection>
 	</scm>
 	<distributionManagement>
 		<repository>
 			<id>cida-releases</id>
 			<name>CIDA Releases</name>
-			<url>http://internal.cida.usgs.gov/maven/content/repositories/cida-releases/</url>
+			<url>http://internal.cida.usgs.gov/maven/content/repositories/cida-public-releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>cida-snapshots</id>
 			<name>CIDA Snapshots</name>
-			<url>http://internal.cida.usgs.gov/maven/content/repositories/cida-snapshots/</url>
+			<url>http://internal.cida.usgs.gov/maven/content/repositories/cida-public-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<repositories>
