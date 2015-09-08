@@ -48,8 +48,7 @@ def generate_skeleton(data, destination_dir, context):
     SF_GAGE_TEMPLATE = 'streamflow_gage.html'
     PROJECT_TEMPLATE = 'project.html'
     DATA_TEMPLATE = 'data.html'
-    SKELETON_DIR = 'skeleton'
-    skeleton_destination_dir = os.path.join(destination_dir, SKELETON_DIR)
+    skeleton_destination_dir = destination_dir
     gc.make_sure_path_exists(skeleton_destination_dir)
     env = Environment(autoescape=True)
     env.loader = FileSystemLoader(TEMPLATE_BASE_DIR)
@@ -71,7 +70,7 @@ def main(argv):
     
     context = {
                u'root_url' : u'' + args.root_url,
-               u'last_modified' : u'' + datetime.datetime.today().isoformat()
+               u'last_modified' : u'' + datetime.datetime.now().strftime('%Y-%m-%d')
                }
     data = {}
     data = gc.get_nwc_data(geoserver, sciencebase)

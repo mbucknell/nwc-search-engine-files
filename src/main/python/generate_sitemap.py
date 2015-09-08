@@ -60,14 +60,15 @@ def generate_sitemap(data, destination_dir, context):
     PROJECT_TEMPLATE = 'project.xml'
     DATA_TEMPLATE = 'data.xml'
     INDEX_TEMPLATE = 'index.xml'
-    SITEMAP_DIR = 'sitemap'
-    sitemap_destination_dir = os.path.join(destination_dir, SITEMAP_DIR)
+    HOME_TEMPLATE = 'home.xml'
+    sitemap_destination_dir = destination_dir
     gc.make_sure_path_exists(sitemap_destination_dir)
     env = Environment(autoescape=True)
     env.loader = FileSystemLoader(TEMPLATE_BASE_DIR)
     
     print 'Creating sitemap files in %s'  % sitemap_destination_dir
     sitemap_files = []
+    sitemap_files.extend(create_sitemaps([{}], HOME_TEMPLATE, sitemap_destination_dir, 'sitemap_home', context, env))
     sitemap_files.extend(create_sitemaps(data['waterbudget_hucs'], WB_HUC_TEMPLATE, sitemap_destination_dir, 'sitemap_wb_huc', context, env))
     sitemap_files.extend(create_sitemaps(data['streamflow_gages'], SF_GAGE_TEMPLATE, sitemap_destination_dir, 'sitemap_sf_gage', context, env))
     sitemap_files.extend(create_sitemaps(data['streamflow_hucs'], SF_HUC_TEMPLATE, sitemap_destination_dir, 'sitemap_sf_huc', context, env))
@@ -92,7 +93,7 @@ def main(argv):
     
     context = {
                'root_url' : args.root_url,
-               'last_modified' : datetime.datetime.today().isoformat()
+               'last_modified' : datetime.datetime.now().strftime('%Y-%m-%d')
                }
     data = gc.get_nwc_data(geoserver, sciencebase)
 
