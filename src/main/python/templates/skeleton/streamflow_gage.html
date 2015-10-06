@@ -1,16 +1,154 @@
 {% extends "base.html" %}
-{% block title%}Streamflow Statistics Calculator - {{properties.STANAME}}{% endblock %}
-{% block description %}Calculate streamflow statistics for the &quot;{{properties.STANAME}}&quot;({{properties.STAID}}) gage.{% endblock %}
+{% block title%}Streamflow Statistics Calculator - {{ properties[config.properties.name] }}{% endblock %}
+{% block description %}Calculate streamflow statistics for the &quot;{{ properties[config.properties.name] }}&quot;({{ properties[config.properties.id] }}) gage.{% endblock %}
 {% block body %}
-<h1>Gage Information</h1>
-<dl>
-	<dt>Gage Name</dt>
-	<dd>{{properties.STANAME}}</dd>
-	<dt>Gage ID</dt>
-	<dd>{{properties.STAID}}</dd>
-	<dt>Gage State</dt>
-	<dd>{{properties.STATE}}</dd>
-</dl>
-<p>Detailed gage information is available via <a href="http://waterdata.usgs.gov/nwis/nwisman/?site_no={{properties.STAID}}">NWIS-Web</a>.</p>
+	<script type="application/ld+json">
+		{
+			"@context" : "http://schema.org",
+			"@graph" : [
+
+				{
+					"@type" : "Dataset",
+					"name" : "NWIS_Site_File",
+					"description" : "Data for NWIS site {{  properties[config.properties.id] }} in tab delimited form",
+					"url" : "http://waterservices.usgs.gov/nwis/site/?format={{ config.variables.nwisSiteFileData.queryParams.format }}&seriesCatalogOutput={{ config.variables.nwisSiteFileData.queryParams.seriesCatalogOutput }}&parameterCd={{ config.variables.nwisSiteFileData.queryParams.parameterCd }}&outputDataTypeCd={{ config.variables.nwisSiteFileData.queryParams.outputDataTypeCd }}&sites={{ properties[config.properties.id] }}",
+					"spatial" : {
+						"@context" : "http://schema.org",
+						"@type" : "Place",
+						"geo" : {
+							"@context" : "http://schema.org",
+							"@type" : "GeoCoordinates",
+							"latitude" : {{ properties[config.properties.lat] }},
+							"longitude" : {{ properties[config.properties.lon] }}
+						}
+					},
+					"author": {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"legalName" : "United States Geological Survey",
+						"name" : "USGS",
+						"url" : "http://www.usgs.gov"
+					},
+					"creator" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+
+					},
+					"publisher" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+
+					},
+					"distribution" : {
+						"@context" : "http://schema.org",
+						"@type" : "DataDownload",
+						"encodingFormat" : "gzip"
+					}
+				},
+				{
+					"@type" : "Dataset",
+					"name" : "NWIS_Streamflow_Data",
+					"description" : "Streamflow time series data for NWIS site {{  properties[config.properties.id] }}",
+					"url" : "http://waterservices.usgs.gov/nwis/dv/?format={{ config.variables.nwisStreamFlowData.queryParams.format }}&statCD={{ config.variables.nwisStreamFlowData.queryParams.statCD }}&parameterCd={{ config.variables.nwisStreamFlowData.queryParams.parameterCd }}&sites={{ properties[config.properties.id] }}&startDT=1850-01-01",
+					"spatial" : {
+						"@context" : "http://schema.org",
+						"@type" : "Place",
+						"geo" : {
+							"@context" : "http://schema.org",
+							"@type" : "GeoCoordinates",
+							"latitude" : {{ properties[config.properties.lat] }},
+							"longitude" : {{ properties[config.properties.lon] }}
+						}
+					},
+					"author": {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"legalName" : "United States Geological Survey",
+						"name" : "USGS",
+						"url" : "http://www.usgs.gov"
+					},
+					"creator" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+
+					},
+					"publisher" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+
+					},
+					"distribution" : {
+						"@context" : "http://schema.org",
+						"@type" : "DataDownload",
+						"encodingFormat" : "xml"
+					}
+				},
+				{
+					"@type" : "Dataset",
+					"name" : "WFS GetFeature",
+					"description" : "WFS GetFeature call for HUC {{ properties[config.properties.id] }}",
+					"url" : "http://cida.usgs.gov/nwc/proxygeoserver/wfs?service=wfs&version=1.1.0&request=GetFeature&typeNames={{ config.namespace }}:{{ config.layerName }}&filter=%3Cogc%3AFilter%20xmlns%3Aogc%3D%22http%3A%2F%2Fwww.opengis.net%2Fogc%22%3E%3Cogc%3APropertyIsEqualTo%20matchCase%3D%22true%22%3E%3Cogc%3APropertyName%3E{{ config.properties.id }}%3C%2Fogc%3APropertyName%3E%3Cogc%3ALiteral%3E{{ properties[config.properties.id] }}%3C%2Fogc%3ALiteral%3E%3C%2Fogc%3APropertyIsEqualTo%3E%3C%2Fogc%3AFilter%3E",
+					"spatial" : {
+						"@context" : "http://schema.org",
+						"@type" : "Place",
+						"geo" : {
+							"@context" : "http://schema.org",
+							"@type" : "GeoCoordinates",
+							"latitude" : {{ properties[config.properties.lat] }},
+							"longitude" : {{ properties[config.properties.lon] }}
+						}
+					},
+					"author": {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+					},
+					"creator" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+					},
+					"publisher" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+					},
+					"distribution" : {
+						"@context" : "http://schema.org",
+						"@type" : "DataDownload",
+						"encodingFormat" : "xml"
+					}
+				}
+			]
+		}
+	</script>
+	<h3>Streamflow Statistics Calculator</h3>
+	<h4>Select Streamflow Statistics Parameters</h4>
+	<h5>Gage ID</h5>
+	<div>{{ properties[config.properties.id] }}</div>
+	<div>Access data fpr this site from <a href="http://waterdata.usgs.gov/nwis/nwisman/?site_no={{ properties[config.properties.id] }}" target="_blank">NWIS-Web</a></div>
+	<h5>Gage Name</h5>
+	<div>{{ properties[config.properties.name] }}</div>
+
+	<h5>Drainage Area (km<sup>2</sup>)</h5>
+	<div>{{ properties[config.properties.drainage_area] }}</div>
 {% include 'streamflow_stat_form.html' %}
 {% endblock %}

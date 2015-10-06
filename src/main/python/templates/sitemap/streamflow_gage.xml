@@ -3,7 +3,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	{% for feature in attributes %}
 	<url>
-		<loc>{{ root_url }}#!streamflow-stats/gage/{{ feature.properties.STAID }}</loc>
+		<loc>{{ root_url }}#!streamflow-stats/gage/{{ feature.properties[config.properties.id] }}</loc>
 		<lastmod>{{ last_modified }}</lastmod>
 	</url>
 	{% endfor %}

@@ -1,0 +1,96 @@
+{
+  "watershed" : {
+    "huc12" : {
+      "layerName" : "huc12",
+      "namespace" : "WBD",
+      "properties" : {
+        "id" : "huc12",
+        "name" : "name"
+      },
+      "sosVariables" : {
+        "dayMet" : {
+          "observedProperty" : "prcp",
+          "description" : "Area Weighted Mean Precipitation",
+          "dataset" : "HUC12_data",
+          "fileName" : "HUC12_daymet.nc"
+        },
+        "eta" : {
+          "observedProperty" : "MEAN_et",
+          "description" : "Area Weighted Mean Actual Evapotranspiration",
+          "dataset" : "HUC12_data",
+          "fileName" : "HUC12_eta.nc"
+        }
+      }
+    },
+    "huc08" : {
+      "layerName" : "huc08",
+      "namespace" : "WBD",
+      "properties" : {
+        "id" : "huc8",
+        "name" : "name"
+      },
+      "sosVariables" : {
+        "dayMet" : {
+          "observedProperty" : "prcp",
+          "description" : "Area Weighted Mean Precipitation",
+          "dataset" : "HUC08_data",
+          "fileName" : "HUC08_daymet.nc"
+        },
+        "eta" : {
+          "observedProperty" : "et",
+          "description" : "Area Weighted Mean Actual Evapotranspiration",
+          "dataset" : "HUC08_data",
+          "fileName" : "HUC08_eta.nc"
+        }
+      }
+    }
+  },
+  "streamflow" : {
+    "huc12" : {
+      "layerName" : "huc12_se_basins_v2",
+      "namespace" : "NWC",
+      "properties" : {
+        "id" : "huc12",
+        "name" : "hu_12_name",
+        "drainage_area" : "drain_sqkm"
+      },
+      "variables" : {
+        "modeledQ" : {
+          "observedProperty" : "MEAN_streamflow",
+          "description" : "Modeled Streamflow",
+          "dataset" : "HUC12_data",
+          "fileName" : "HUC12_Q.nc"
+        }
+      }
+    },
+    "gage" : {
+      "layerName" : "gagesII",
+      "namespace" : "NWC",
+      "properties" : {
+        "id" : "STAID",
+        "name" : "STANAME",
+        "drainage_area" : "DRAIN_SQKM",
+        "lat" : "LAT_GAGE",
+        "lon" : "LNG_GAGE"
+      },
+      "variables" : {
+        "nwisStreamFlowData" : {
+          "queryParams" : {
+            "format" : "waterml,1.1",
+            "statCD" : "00003",
+            "parameterCd" : "00060"
+          }
+        },
+        "nwisSiteFileData" : {
+          "queryParams": {
+            "format": "rdb",
+            "seriesCatalogOutput": "true",
+            "parameterCd": "00060",
+            "outputDataTypeCd": "dv"
+          }
+        }
+      }
+    }
+  }
+
+}

@@ -1,17 +1,95 @@
 {% extends "base.html" %}
-{% block title%}Streamflow Statistics Calculator - {{properties.hu_12_name}}{% endblock %}
-{% block description %}Calculate streamflow statistics for the &quot;{{properties.hu_12_name}}&quot;({{properties.huc12}}) watershed.{% endblock %}
+{% block title%}Streamflow Statistics Calculator - {{ properties[config.properties.name] }}{% endblock %}
+{% block description %}Calculate streamflow statistics for the &quot;{{ properties[config.properties.name] }}&quot;({{ properties[config.properties.id] }}) watershed.{% endblock %}
 {% block body %}
-<h1>HUC Information</h1>
-<dl>
-	<dt>HUC Name</dt>
-	<dd>{{properties.hu_12_name}}</dd>
-	<dt>HUC ID</dt>
-	<dd>{{properties.huc12}}</dd>
-	<dt>HUC States</dt>
-	<dd>{{properties.states}}</dd>
-</dl>
-<p>Software to calculate these statistics is also available as an open-source R package on GitHub:<a href="https://github.com/USGS-R/EflowStats">EflowStats</a>.</p>
-<p>Complete streamflow data description is available <a href="http://pubs.er.usgs.gov/publication/sir20145231">in this report</a></p>
-{% include 'streamflow_stat_form.html' %}
+	<script type="application/ld+json">
+		{
+			"@context" : "http://schema.org",
+			"@graph" : [
+				{
+					"@type" : "Dataset",
+					"name" : "Modeled Streamflow",
+					"description" : "Modeled streamflow for HUC {{ properties[config.properties.id] }}",
+					"url" : "http://cida.usgs.gov/nwc/proxythredds/{{ config.variables.modeledQ.dataset }}/{{ config.variables.modeledQ.fileName }}?request=GetObservation&service=SOS&version=1.0.0&observedProperty={{ config.variables.modeledQ.observedProperty }}&offering={{ properties[config.properties.id] }}",
+					"author": {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"legalName" : "United States Geological Survey",
+						"name" : "USGS",
+						"url" : "http://www.usgs.gov"
+					},
+					"creator" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+
+					},
+					"publisher" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+
+					},
+					"distribution" : {
+						"@context" : "http://schema.org",
+						"@type" : "DataDownload",
+						"encodingFormat" : "xml"
+					}
+				},
+				{
+					"@type" : "Dataset",
+					"name" : "WFS GetFeature",
+					"description" : "WFS GetFeature call for HUC {{ properties[config.properties.id] }}",
+					"url" : "http://cida.usgs.gov/nwc/proxygeoserver/wfs?service=wfs&version=1.1.0&request=GetFeature&typeNames={{ config.namespace }}:{{ config.layerName }}&filter=%3Cogc%3AFilter%20xmlns%3Aogc%3D%22http%3A%2F%2Fwww.opengis.net%2Fogc%22%3E%3Cogc%3APropertyIsEqualTo%20matchCase%3D%22true%22%3E%3Cogc%3APropertyName%3E{{ config.properties.id }}%3C%2Fogc%3APropertyName%3E%3Cogc%3ALiteral%3E{{ properties[config.properties.id] }}%3C%2Fogc%3ALiteral%3E%3C%2Fogc%3APropertyIsEqualTo%3E%3C%2Fogc%3AFilter%3E",
+					"author": {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+					},
+					"creator" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+					},
+					"publisher" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+					},
+					"distribution" : {
+						"@context" : "http://schema.org",
+						"@type" : "DataDownload",
+						"encodingFormat" : "xml"
+					}
+				}
+			]
+		}
+	</script>
+	<h3>Streamflow Statistics Calculator</h3>
+	<div>
+	Software to calculate these statistics is also available as an open-source R package on GitHub: <a href="https://github.com/USGS-R/EflowStats">https://github.com/USGS-R/EflowStats</a>
+	</div>
+	<div>
+	Modeled streamflow data was created using methods <a href="#!streamflow-stats/model-info" target="_blank">described here</a>.
+	</div>
+	<h4>Select Streamflow Statistics Parameters</h4>
+	<div>Select a subset of the time series for which you would like to calculate various statistics.</div>
+	<div>Note that streamflow estimate applies to the watershed selected and all watersheds upstream of it.</div>
+	<h5>Hydrologic Unit Code</h5>
+	<div>{{ properties[config.properties.id] }}</div>
+	<h5>Watershed Name</h5>
+	<div>{{ properties[config.properties.name] }}</div>
+	<h5>Drainage Area (km<sup>2</sup>)</h5>
+	<div>{{ properties[config.properties.drainage_area] }}</div>
+	{% include 'streamflow_stat_form.html' %}
 {% endblock %}
