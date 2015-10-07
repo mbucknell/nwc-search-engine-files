@@ -15,6 +15,7 @@
 	</organization>
 	<properties>
 		<nwc.search-engine-files.web-accessible-dir>${project.build.outputDirectory}/META-INF/resources/</nwc.search-engine-files.web-accessible-dir>
+		<nwc.search-engine-files.geoserver>http://cida.usgs.gov/nwc/geoserver/</nwc.search-engine-files.geoserver>
 	</properties>
 	<licenses>
 		<license>
@@ -178,7 +179,7 @@
 								<configuration>
 									<executable>bash </executable>
 									<workingDirectory>src/main/python</workingDirectory>
-									<commandlineArgs>generate_sitemap.sh ${nwc.search-engine-files.web-accessible-dir} http://cida.usgs.gov/nwc/geoserver/</commandlineArgs>
+									<commandlineArgs>generate_sitemap.sh ${nwc.search-engine-files.web-accessible-dir} ${nwc.search-engine-files.geoserver}</commandlineArgs>
 								</configuration>
 							</execution>
 							<execution>
@@ -190,7 +191,7 @@
 								<configuration>
 									<executable>bash </executable>
 									<workingDirectory>src/main/python</workingDirectory>
-									<commandlineArgs>generate_skeleton.sh ${project.build.outputDirectory}/skeleton http://cida.usgs.gov/nwc/geoserver/</commandlineArgs>
+									<commandlineArgs>generate_skeleton.sh ${project.build.outputDirectory}/skeleton ${nwc.search-engine-files.geoserver}</commandlineArgs>
 								</configuration>
 							</execution>
 						</executions>
