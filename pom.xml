@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>gov.usgs.cida.nwc</groupId>
 	<artifactId>search-engine-files</artifactId>
-	<version>1.0.8</version>
+	<version>1.0.9-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>NWC Search Engine Files</name>
@@ -112,7 +112,7 @@
 		<url>https://github.com/USGS-CIDA/nwc</url>
 		<connection>scm:git:git@github.com:USGS-CIDA/nwc-search-engine-files.git</connection>
 		<developerConnection>scm:git:git@github.com:USGS-CIDA/nwc-search-engine-files.git</developerConnection>
-	  <tag>search-engine-files-1.0.8</tag>
+	  <tag>HEAD</tag>
   </scm>
 	<distributionManagement>
 		<repository>
