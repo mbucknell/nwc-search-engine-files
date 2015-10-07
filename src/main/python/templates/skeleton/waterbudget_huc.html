@@ -1,27 +1,100 @@
 {% extends "base.html" %}
-{% block title%}Available Water Budget Components - {{properties.hu_12_name}}{% endblock %}
+{% block title%}Available Water Budget Components - {{ properties[config.properties.name] }}{% endblock %}
 {% block description %}
-Visualize and download water budget data for the &quot;{{properties.hu_12_name}}&quot;({{properties.huc_12}}) watershed.
-Compare this watershed to another watershed. Available data include precipiatation, evapotranspiration, and water use.
+	Visualize and download water budget data for the &quot;{{ properties[config.properties.name] }}&quot;({{ properties[config.properties.id] }}) watershed.
+	Compare this watershed to another watershed. Available data include precipiatation, evapotranspiration, and water use.
 {% endblock %}
 {% block body %}
+	<script type="application/ld+json">
+		{
+			"@context" : "http://schema.org",
+			"@graph" : [
+				{% for key, value in config.sosVariables.iteritems() %}
 
-<h1>Precipitation and Evapotranspiration for the Selected Watershed</h1>
+					{
+						"@type" : "Dataset",
+						"name" : "{{ key }}-{{ value.dataset }}",
+						"description" : "{{ value.description }}",
+						"url" : "http://cida.usgs.gov/nwc/proxythredds/{{ value.dataset }}/{{ value.fileName }}?request=GetObservation&service=SOS&version=1.0.0&observedProperty={{ value.observedProperty }}&offering={{ properties[config.properties.id] }}",
+						"author": {
+							"@context": "http://schema.org",
+							"@type": "GovernmentOrganization",
+							"legalName" : "United States Geological Survey",
+							"name" : "USGS",
+							"url" : "http://www.usgs.gov"
+						},
+						"creator" : {
+							"@context": "http://schema.org",
+							"@type": "GovernmentOrganization",
+							"name" : "USGS",
+							"legalName" : "United States Geological Survey",
+							"url" : "http://www.usgs.gov"
 
-<h1>HUC Information</h1>
-<dl>
-	<dt>HUC Name</dt>
-	<dd>{{properties.hu_12_name}}</dd>
-	<dt>HUC ID</dt>
-	<dd>{{properties.huc_12}}</dd>
-	<dt>HUC States</dt>
-	<dd>{{properties.states}}</dd>
-</dl>
+						},
+						"publisher" : {
+							"@context": "http://schema.org",
+							"@type": "GovernmentOrganization",
+							"name" : "USGS",
+							"legalName" : "United States Geological Survey",
+							"url" : "http://www.usgs.gov"
 
-<p>Precipitation and Evapotranspiration data derived from the <a href="http://daymet.ornl.gov/">Daymet</a>  and <a href="http://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/ssebopeta/monthly">SSEBop</a> datasets, respectively.</p>
-<p>Drag the handles at then end of the date axis to zoom in. Drag the window you are zoomed on to pan the date window through time.</p>
-<p>To access custom subsets of these and other data, visit the Geo Data Portal .</p>
-<p>Siczewicz, Peter. U.S. Historical Counties (Generalized .001 deg). Dataset. Emily Kelley, digital comp. Atlas of Historical County Boundaries, ed. by John H. Long. Chicago: The Newberry Library, 2011.
-Available online from <a href="http://publications.newberry.org/ahcbp">http://publications.newberry.org/ahcbp</a></p> 
+						},
+						"distribution" : {
+							"@context" : "http://schema.org",
+							"@type" : "DataDownload",
+							"encodingFormat" : "xml"
+						}
+					}
+					,
+				{% endfor %}
+				{
+					"@type" : "Dataset",
+					"name" : "WFS GetFeature",
+					"description" : "WFS GetFeature call for HUC {{ properties[config.properties.id] }}",
+					"url" : "http://cida.usgs.gov/nwc/proxygeoserver/wfs?service=wfs&version=1.1.0&request=GetFeature&typeNames={{ config.namespace }}:{{ config.layerName }}&filter=%3Cogc%3AFilter%20xmlns%3Aogc%3D%22http%3A%2F%2Fwww.opengis.net%2Fogc%22%3E%3Cogc%3APropertyIsEqualTo%20matchCase%3D%22true%22%3E%3Cogc%3APropertyName%3E{{ config.properties.id }}%3C%2Fogc%3APropertyName%3E%3Cogc%3ALiteral%3E{{ properties[config.properties.id] }}%3C%2Fogc%3ALiteral%3E%3C%2Fogc%3APropertyIsEqualTo%3E%3C%2Fogc%3AFilter%3E",
+					"author": {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+					},
+					"creator" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+					},
+					"publisher" : {
+						"@context": "http://schema.org",
+						"@type": "GovernmentOrganization",
+						"name" : "USGS",
+						"legalName" : "United States Geological Survey",
+						"url" : "http://www.usgs.gov"
+					},
+					"distribution" : {
+						"@context" : "http://schema.org",
+						"@type" : "DataDownload",
+						"encodingFormat" : "xml"
+					}
+				}
+			]
+		}
+	</script>
+	<h1>National Water Census - Data Portal</h1>
+	<h3>Available Water Budget Components</h3>
+	<h4>Precipitation and Evapotranspiration for the Selected Watershed</h4>
+
+	<h5>Hydrologic Unit Code</h5>
+	<div>{{ properties[config.properties.id] }}</div>
+	<h5>Watershed Name</h5>
+	<div>{{ properties[config.properties.name] }}</div>
+
+	<p>Precipitation and Evapotranspiration data derived from the <a href="http://daymet.ornl.gov/">Daymet</a>  and <a href="http://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/ssebopeta/monthly">SSEBop</a> datasets, respectively.</p>
+	<p>Drag the handles at then end of the date axis to zoom in. Drag the window you are zoomed on to pan the date window through time.</p>
+	<p>To access custom subsets of these and other data, visit the <a href="http://cida.usgs.gov/gdp" target="_blank">Geo Data Portal</a>.</p>
+	<p>Siczewicz, Peter. U.S. Historical Counties (Generalized .001 deg). Dataset. Emily Kelley, digital comp. Atlas of Historical County Boundaries, ed. by John H. Long. Chicago: The Newberry Library, 2011.
+	Available online from <a href="http://publications.newberry.org/ahcbp">http://publications.newberry.org/ahcbp</a></p>
 
 {% endblock %}
