@@ -15,7 +15,7 @@
 	</organization>
 	<properties>
 		<nwc.search-engine-files.web-accessible-dir>${project.build.outputDirectory}/META-INF/resources/</nwc.search-engine-files.web-accessible-dir>
-        <nwc.search-engine-files.geoserver>http://cida.usgs.gov/nwc/geoserver/</nwc.search-engine-files.geoserver>
+		<nwc.search-engine-files.geoserver>http://cida.usgs.gov/nwc/geoserver/</nwc.search-engine-files.geoserver>
 	</properties>
 	<licenses>
 		<license>
