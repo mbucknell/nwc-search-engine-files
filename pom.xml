@@ -177,6 +177,11 @@
 									<goal>exec</goal>
 								</goals>
 								<configuration>
+									<environmentVariables>
+										<VIRTUALENV>
+											${nwc.search-engine-files.virtualenvpath}
+										</VIRTUALENV>
+									</environmentVariables>
 									<executable>bash </executable>
 									<workingDirectory>src/main/python</workingDirectory>
 									<commandlineArgs>generate_sitemap.sh ${nwc.search-engine-files.web-accessible-dir} ${nwc.search-engine-files.geoserver}</commandlineArgs>
@@ -189,6 +194,11 @@
 									<goal>exec</goal>
 								</goals>
 								<configuration>
+									<environmentVariables>
+										<VIRTUALENV>
+											${nwc.search-engine-files.virtualenvpath}
+										</VIRTUALENV>
+									</environmentVariables>
 									<executable>bash </executable>
 									<workingDirectory>src/main/python</workingDirectory>
 									<commandlineArgs>generate_skeleton.sh ${project.build.outputDirectory}/skeleton ${nwc.search-engine-files.geoserver}</commandlineArgs>
