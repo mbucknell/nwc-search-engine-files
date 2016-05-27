@@ -52,7 +52,7 @@
       "properties" : {
         "id" : "huc12",
         "name" : "hu_12_name",
-        "drainage_area" : "drain_sqkm"
+        "drainage_area" : "areasqkm"
       },
       "variables" : {
         "modeledQ" : {
